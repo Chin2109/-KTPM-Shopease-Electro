@@ -1,24 +1,36 @@
-## Project Overview:
+# Giới thiệu
 
-Built a full-featured e-commerce platform simulating a real online store. Customers can browse products, manage carts, place orders, chat with staff, and receive real-time notifications. Admins manage inventory and analytics.
+Công ty Electro là doanh nghiệp kinh doanh thiết bị điện tử. Hiện nay, công ty có nhu cầu mở rộng kênh bán hàng, hướng đến triển khai một website thương mại điện tử cho riêng công ty.
 
-### Video demo: https://youtu.be/3ejhjt0IXyQ
+Nhằm đáp ứng nhu cầu của quý công ty, dự án Shopease-Electro ra đời để xây dựng một website thương mại điện tử như ý định của quý công ty.
 
-## Responsibilities:
+# Thiết kế hệ thống
 
-- Implemented JWT authentication & role-based authorization (Admin, Customer, Employee).
-  Built REST APIs for product category, cart, orders, reviews, wishlist, pre-orders, and reward points.
-- Integrated real-time chat (WebSocket) and notification system.
-- Developed advanced search, filtering, and sorting features.
-- Handled email verification with Spring Mail & Freemarker.
-- Designed MySQL schema and implemented backend with Spring Boot & Hibernate.
-- Created a modern user interface to smoothly communicate with the backend, ensuring a seamless user experience while interacting with Spring Boot APIs.
+## Actors
 
-## Tech stack:
+Hệ thống được thiết kế để phục vụ nhu cầu sử dụng của 3 actor chính: khách hàng (customer), người quản trị (admin) và nhân viên (employee). Trong đó, actor khách hàng có thể là một khách hàng vãng lai (anonymous customer), hoặc là một khách hàng đã đãng ký tài khoản trong hệ thống (registered customer).
 
-Java, Spring Boot, Hibernate, MySQL, JWT, WebSocket, MapStruct, Lombok, Swagger, Freemarker, Spring Mail | ReactJS, TypeScript, Mantine UI, React Query, Zustand
+Ngoài ra, hệ thống còn có sự tham gia của 2 actor phụ là dịch vụ của Giao Hàng Nhanh và PayPal để phục vụ các chức năng giao hàng và thanh toán.
 
-<!-- ## Class Diagram
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/60851390/228576160-33dfc714-c568-4674-b98e-3aa35a8d33f2.png" alt="Actors" width="650" />
+  <br>
+  <em>Actors</em>
+</p>
+
+## Use Case Diagram
+
+Hệ thống được xây dựng để giải quyết nhu cầu bán hàng trực tuyến cho một công ty kinh doanh thiết bị điện tử, cũng như điều phối một số công việc nội bộ của công ty này.
+
+Yêu cầu của công ty là phải có một website phía khách hàng để họ có thể tương tác với hệ thống, thực hiện những chức năng cơ bản của thương mại điện tử như thêm sản phẩm vào giỏ hàng, đăng ký tài khoản, cập nhật hồ sơ cá nhân, v.v.; đồng thời cũng phải có một website quản trị để điều phối hoạt động của công ty một cách toàn diện, từ việc quản lý nhân viên, khách hàng, đến quản lý sản phẩm, sự lưu thông hàng hóa ở kho bãi, đơn hàng, vận đơn, kiểm duyệt đánh giá, thiết lập các chương trình khuyến mãi, v.v.
+
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/60851390/228576829-684e6c1d-7192-4c68-af0c-0ce17be33059.png" alt="Use Case Diagram" width="750" />
+  <br>
+  <em>Use Case Diagram</em>
+</p>
+
+## Class Diagram
 
 Hệ thống gồm có 57 lớp chính, được chia thành 13 nhóm.
 
@@ -44,9 +56,29 @@ Cơ sở dữ liệu của hệ thống gồm có 60 bảng.
   <img src="https://user-images.githubusercontent.com/60851390/228535444-d4945691-af6d-4514-b8bb-ae670fac7618.svg" alt="Database Diagram" />
   <br>
   <em>Database Diagram</em>
-</p> -->
+</p>
 
-## Sản phẩm
+## Kiến trúc tổng thể hệ thống
+
+Hệ thống được thiết kế theo kiến trúc 3 tầng, trong đó: tầng dữ liệu được quản lý bởi hệ quản trị cơ sở dữ liệu MySQL, tầng ứng dụng là một ứng dụng Spring Boot, và tầng trình bày là một ứng dụng React.
+
+Tầng ứng dụng kết nối với tầng dữ liệu bằng kết nối TCP, và việc kết nối được quản lý bởi JDBC. Tại tầng ứng dụng, việc thao tác với dữ liệu được thực hiện thông qua framework Spring Data JPA.
+
+Tầng ứng dụng kết nối với tầng trình bày bằng kết nối HTTP (RESTful API) và WebSocket để gửi các dữ liệu cũng như nhận các lệnh thay đổi dữ liệu từ người dùng.
+
+Ứng dụng Spring Boot của tầng ứng dụng được tổ chức theo kiến trúc MVC. Vì hệ thống được thiết kế theo hướng SPA, nên phần view của ứng dụng Spring Boot chỉ là các tệp JSON đơn giản hoặc trạng trái HTTP trong response. Phần model được cụ thể hóa bằng các đối tượng entity (thực thể đại diện cho một bảng dữ liệu), repository (đối tượng thao tác với cơ sở dữ liệu) và service (triển khai các hành vi nghiệp vụ). Phần controller đảm nhận định tuyến các lời gọi API đến các phương thức xử lý được chỉ định, từ đó gọi service để thực hiện yêu cầu.
+
+Toàn bộ hệ thống được triển khai trên nền tảng Docker, gồm có 3 container tương ứng với mỗi tầng. Một container cho cơ sở dữ liệu MySQL, một container cho ứng dụng Spring Boot, và một container cho ứng dụng React. Các container giao tiếp với nhau bằng một mạng nội bộ do Docker quản lý thông qua cấu hình cho trước.
+
+Ngoài ra, hệ thống còn tương tác với các dịch vụ bên thứ ba, bao gồm dịch vụ vận chuyển Giao Hàng Nhanh và dịch vụ thanh toán quốc tế PayPal.
+
+<p align="center" style="background-color: white;">
+  <img src="https://user-images.githubusercontent.com/60851390/228531433-ba3a591b-7b9b-4e51-bfae-4ea0cdfe3c5a.svg" alt="Database Diagram" width="700" />
+  <br>
+  <em>System Architecture</em>
+</p>
+
+# Sản phẩm
 
 Một số trang của hệ thống.
 
