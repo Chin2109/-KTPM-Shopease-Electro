@@ -19,13 +19,13 @@ jobs:
           node-version: 18
 
       - name: Install dependencies
-        working-directory: frontend
+        working-directory: electro-client
         run: npm install
 
       - name: Run frontend tests
-        working-directory: frontend
+        working-directory: electro-client
         run: npm test -- --watch=false
 
       - name: Build frontend
-        working-directory: frontend
+        working-directory: electro-client
         run: npm run build

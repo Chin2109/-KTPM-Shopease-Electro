@@ -20,5 +20,5 @@ jobs:
           distribution: 'temurin'
 
       - name: Run backend tests
-        working-directory: backend
+        working-directory: electro-server
         run: mvn test
