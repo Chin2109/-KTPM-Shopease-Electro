@@ -50,7 +50,7 @@ public class ProvinceController {
 //    public ResponseEntity<Void> deleteProvinces(@RequestBody List<Long> ids) {
 //        provinceService.delete(ids);
 //        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-//        return res;
+//        return response;
 //    }
 
 }
