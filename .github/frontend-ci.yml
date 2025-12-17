@@ -1,0 +1,31 @@
+name: Frontend CI
+
+on:
+  push:
+    branches: [ "main", "develop" ]
+  pull_request:
+
+jobs:
+  frontend-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        working-directory: frontend
+        run: npm install
+
+      - name: Run frontend tests
+        working-directory: frontend
+        run: npm test -- --watch=false
+
+      - name: Build frontend
+        working-directory: frontend
+        run: npm run build
