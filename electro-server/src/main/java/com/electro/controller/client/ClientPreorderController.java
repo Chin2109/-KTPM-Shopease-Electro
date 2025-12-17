@@ -42,6 +42,7 @@ public class ClientPreorderController {
 
     private static final String PREORDER_SORT = "updatedAt,desc";
 
+
     @GetMapping
     public ResponseEntity<ListResponse<ClientPreorderResponse>> getAllPreorders(
             Authentication authentication,
