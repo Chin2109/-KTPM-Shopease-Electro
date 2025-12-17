@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import {
   Alert,
   Anchor,
-  Box,
   Button,
   Card,
   Container,
@@ -26,7 +25,7 @@ import NotifyUtils from 'utils/NotifyUtils';
 import useAuthStore from 'stores/use-auth-store';
 import { UserResponse } from 'models/User';
 import { AlertCircle } from 'tabler-icons-react';
-import { ClientCartResponse, Empty } from 'types';
+// import { ClientCartResponse, Empty } from 'types';
 
 const useStyles = createStyles((theme) => ({
   wrapper: {
@@ -76,8 +75,8 @@ function ClientSignin() {
     updateJwtToken,
     updateUser,
     resetAuthState,
-    updateCurrentCartId,
-    updateCurrentTotalCartItems,
+    // updateCurrentCartId,
+    // updateCurrentTotalCartItems,
   } = useAuthStore();
 
   const [counter, setCounter] = useState(3);
@@ -98,9 +97,9 @@ function ClientSignin() {
     _ => FetchUtils.getWithToken(ResourceURL.CLIENT_USER_INFO)
   );
 
-  const cartApi = useMutation<ClientCartResponse | Empty, ErrorMessage>(
-    _ => FetchUtils.getWithToken(ResourceURL.CLIENT_CART)
-  );
+  // const cartApi = useMutation<ClientCartResponse | Empty, ErrorMessage>(
+  //   _ => FetchUtils.getWithToken(ResourceURL.CLIENT_CART)
+  // );
 
   useEffect(() => {
     if (openedAlert && user && counter > 0) {
@@ -126,15 +125,15 @@ function ClientSignin() {
         const userResponse = await userInfoApi.mutateAsync();
         updateUser(userResponse);
 
-        const cartResponse = await cartApi.mutateAsync();
+        // const cartResponse = await cartApi.mutateAsync();
         // Reference: https://stackoverflow.com/a/136411
-        if (Object.hasOwn(cartResponse, 'cartId')) {
-          updateCurrentCartId(cartResponse.cartId);
-          updateCurrentTotalCartItems(cartResponse.cartItems.length);
-        } else {
-          updateCurrentCartId(null);
-          updateCurrentTotalCartItems(0);
-        }
+        // if (Object.hasOwn(cartResponse, 'cartId')) {
+        //   updateCurrentCartId(cartResponse.cartId);
+        //   updateCurrentTotalCartItems(cartResponse.cartItems.length);
+        // } else {
+        //   updateCurrentCartId(null);
+        //   updateCurrentTotalCartItems(0);
+        // }
 
         NotifyUtils.simpleSuccess('Đăng nhập thành công');
         setOpenedAlert(true);
@@ -188,9 +187,9 @@ function ClientSignin() {
                 disabled={!!user}
                 {...form.getInputProps('password')}
               />
-              <Box mt={5}>
+              {/* <Box mt={5}>
                 <Anchor component={Link} to="/forgot" size="sm">Quên mật khẩu?</Anchor>
-              </Box>
+              </Box> */}
               {/* TODO: Hoàn chỉnh checkbox */}
               {/*<Checkbox*/}
               {/*  label="Giữ trạng thái đăng nhập"*/}

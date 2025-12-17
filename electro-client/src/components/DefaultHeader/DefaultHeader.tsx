@@ -69,16 +69,16 @@ const headerLinks: HeaderLink[] = [
     label: 'Tài khoản',
     icon: User,
   },
-  {
-    link: '/admin/notification',
-    label: 'Thông báo',
-    icon: Bell,
-  },
-  {
-    link: '/admin/chat',
-    label: 'Tin nhắn',
-    icon: Messages,
-  },
+  // {
+  //   link: '/admin/notification',
+  //   label: 'Thông báo',
+  //   icon: Bell,
+  // },
+  // {
+  //   link: '/admin/chat',
+  //   label: 'Tin nhắn',
+  //   icon: Messages,
+  // },
   {
     link: '/',
     label: 'Website',
@@ -134,7 +134,7 @@ export function DefaultHeader() {
             {headerLinksFragment}
           </Group>
           <Group spacing="xs">
-            <ActionIcon
+            {/* <ActionIcon
               variant="outline"
               title="Tìm kiếm"
               color="blue"
@@ -148,7 +148,7 @@ export function DefaultHeader() {
               onClick={() => toggleColorScheme()}
             >
               {dark ? <Sun size={18}/> : <MoonStars size={18}/>}
-            </ActionIcon>
+            </ActionIcon> */}
             <ActionIcon
               variant="outline"
               title="Đăng xuất"

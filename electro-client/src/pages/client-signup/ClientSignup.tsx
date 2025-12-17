@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { z } from 'zod';
 import MessageUtils from 'utils/MessageUtils';
 import { useForm, zodResolver } from '@mantine/form';
-import { Empty, RegistrationRequest, RegistrationResponse, SelectOption } from 'types';
+import { RegistrationRequest, RegistrationResponse, SelectOption } from 'types';
 import useTitle from 'hooks/use-title';
 import useSelectAddress from 'hooks/use-select-address';
 import useGetAllApi from 'hooks/use-get-all-api';
@@ -21,8 +21,6 @@ import {
   Button,
   Card,
   Container,
-  Divider,
-  Group,
   PasswordInput,
   Select,
   Stack,
@@ -36,7 +34,7 @@ import useAuthStore from 'stores/use-auth-store';
 import { Check, MailOpened, ShieldCheck, UserCheck } from 'tabler-icons-react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import MiscUtils from 'utils/MiscUtils';
-import { useModals } from '@mantine/modals';
+// import { useModals } from '@mantine/modals';
 
 const genderSelectList: SelectOption[] = [
   {
@@ -328,8 +326,8 @@ function ClientSignupStepOne({ nextStep }: { nextStep: () => void }) {
 }
 
 function ClientSignupStepTwo({ nextStep, userId }: { nextStep: () => void, userId: number | null }) {
-  const theme = useMantineTheme();
-  const modals = useModals();
+  // const theme = useMantineTheme();
+  // const modals = useModals();
 
   const { updateCurrentSignupUserId } = useAuthStore();
 
@@ -358,16 +356,16 @@ function ClientSignupStepTwo({ nextStep, userId }: { nextStep: () => void, userI
     }
   );
 
-  const resendRegistrationTokenApi = useMutation<Empty, ErrorMessage, { userId: number }>(
-    (request) => FetchUtils.get(ResourceURL.CLIENT_REGISTRATION_RESEND_TOKEN(request.userId)),
-    {
-      onSuccess: () => {
-        NotifyUtils.simpleSuccess('Đã gửi lại mã xác nhận thành công');
-        modals.closeAll();
-      },
-      onError: () => NotifyUtils.simpleFailed('Gửi lại mã xác nhận không thành công'),
-    }
-  );
+  // const resendRegistrationTokenApi = useMutation<Empty, ErrorMessage, { userId: number }>(
+  //   (request) => FetchUtils.get(ResourceURL.CLIENT_REGISTRATION_RESEND_TOKEN(request.userId)),
+  //   {
+  //     onSuccess: () => {
+  //       NotifyUtils.simpleSuccess('Đã gửi lại mã xác nhận thành công');
+  //       modals.closeAll();
+  //     },
+  //     onError: () => NotifyUtils.simpleFailed('Gửi lại mã xác nhận không thành công'),
+  //   }
+  // );
 
   const handleFormSubmit = form.onSubmit((formValues) => {
     if (userId) {
@@ -380,38 +378,38 @@ function ClientSignupStepTwo({ nextStep, userId }: { nextStep: () => void, userI
     }
   });
 
-  const handleResendTokenButton = () => {
-    if (userId) {
-      modals.openConfirmModal({
-        size: 'xs',
-        overlayColor: theme.colorScheme === 'dark' ? theme.colors.dark[9] : theme.colors.gray[2],
-        overlayOpacity: 0.55,
-        overlayBlur: 3,
-        closeOnClickOutside: false,
-        closeOnConfirm: false,
-        title: <strong>Gửi lại mã xác nhận</strong>,
-        children: <Text size="sm">Bạn có muốn gửi lại mã xác nhận đến email đã nhập trước đó?</Text>,
-        labels: {
-          cancel: 'Đóng',
-          confirm: 'Gửi',
-        },
-        confirmProps: { color: 'blue', disabled: resendRegistrationTokenApi.isLoading },
-        onConfirm: () => resendRegistrationTokenApi.mutate({ userId: userId }),
-      });
-    }
-  };
+  // const handleResendTokenButton = () => {
+  //   if (userId) {
+  //     modals.openConfirmModal({
+  //       size: 'xs',
+  //       overlayColor: theme.colorScheme === 'dark' ? theme.colors.dark[9] : theme.colors.gray[2],
+  //       overlayOpacity: 0.55,
+  //       overlayBlur: 3,
+  //       closeOnClickOutside: false,
+  //       closeOnConfirm: false,
+  //       title: <strong>Gửi lại mã xác nhận</strong>,
+  //       children: <Text size="sm">Bạn có muốn gửi lại mã xác nhận đến email đã nhập trước đó?</Text>,
+  //       labels: {
+  //         cancel: 'Đóng',
+  //         confirm: 'Gửi',
+  //       },
+  //       confirmProps: { color: 'blue', disabled: resendRegistrationTokenApi.isLoading },
+  //       onConfirm: () => resendRegistrationTokenApi.mutate({ userId: userId }),
+  //     });
+  //   }
+  // };
 
-  const handleResendTokenWithNewEmailButton = () => {
-    modals.openModal({
-      size: 'md',
-      overlayColor: theme.colorScheme === 'dark' ? theme.colors.dark[9] : theme.colors.gray[2],
-      overlayOpacity: 0.55,
-      overlayBlur: 3,
-      closeOnClickOutside: false,
-      title: <strong>Thay đổi email</strong>,
-      children: <ChangeEmailModal userId={userId}/>,
-    });
-  };
+  // const handleResendTokenWithNewEmailButton = () => {
+  //   modals.openModal({
+  //     size: 'md',
+  //     overlayColor: theme.colorScheme === 'dark' ? theme.colors.dark[9] : theme.colors.gray[2],
+  //     overlayOpacity: 0.55,
+  //     overlayBlur: 3,
+  //     closeOnClickOutside: false,
+  //     title: <strong>Thay đổi email</strong>,
+  //     children: <ChangeEmailModal userId={userId}/>,
+  //   });
+  // };
 
   return (
     <Card withBorder shadow="md" p={30} radius="md" sx={{ width: 500, margin: 'auto' }}>
@@ -435,7 +433,7 @@ function ClientSignupStepTwo({ nextStep, userId }: { nextStep: () => void, userI
           </Stack>
         </form>
 
-        <Divider label="hoặc" labelPosition="center"/>
+        {/* <Divider label="hoặc" labelPosition="center"/>
 
         <Button radius="md" variant="outline" onClick={handleResendTokenButton}>
           Gửi mã xác nhận lần nữa
@@ -443,7 +441,7 @@ function ClientSignupStepTwo({ nextStep, userId }: { nextStep: () => void, userI
 
         <Button radius="md" variant="outline" onClick={handleResendTokenWithNewEmailButton}>
           Gửi mã xác nhận lần nữa với email mới
-        </Button>
+        </Button> */}
       </Stack>
     </Card>
   );
@@ -461,70 +459,70 @@ function ClientSignupStepThree() {
   );
 }
 
-function ChangeEmailModal({ userId }: { userId: number | null }) {
-  const modals = useModals();
+// function ChangeEmailModal({ userId }: { userId: number | null }) {
+//   const modals = useModals();
 
-  const initialFormValues = {
-    email: '',
-  };
+//   const initialFormValues = {
+//     email: '',
+//   };
 
-  const formSchema = z.object({
-    email: z.string({ invalid_type_error: 'Vui lòng không bỏ trống' })
-      .email({ message: 'Nhập email đúng định dạng' }),
-  });
+//   const formSchema = z.object({
+//     email: z.string({ invalid_type_error: 'Vui lòng không bỏ trống' })
+//       .email({ message: 'Nhập email đúng định dạng' }),
+//   });
 
-  const form = useForm({
-    initialValues: initialFormValues,
-    schema: zodResolver(formSchema),
-  });
+//   const form = useForm({
+//     initialValues: initialFormValues,
+//     schema: zodResolver(formSchema),
+//   });
 
-  const changeRegistrationEmailApi = useMutation<Empty, ErrorMessage, { userId: number, email: string }>(
-    (request) => FetchUtils.put(
-      ResourceURL.CLIENT_REGISTRATION_CHANGE_EMAIL(request.userId),
-      {},
-      { email: request.email }
-    ),
-    {
-      onSuccess: () => {
-        NotifyUtils.simpleSuccess('Đã đổi email thành công và đã gửi lại mã xác nhận mới');
-        modals.closeAll();
-      },
-      onError: () => NotifyUtils.simpleFailed('Thay đổi email không thành công'),
-    }
-  );
+//   const changeRegistrationEmailApi = useMutation<Empty, ErrorMessage, { userId: number, email: string }>(
+//     (request) => FetchUtils.put(
+//       ResourceURL.CLIENT_REGISTRATION_CHANGE_EMAIL(request.userId),
+//       {},
+//       { email: request.email }
+//     ),
+//     {
+//       onSuccess: () => {
+//         NotifyUtils.simpleSuccess('Đã đổi email thành công và đã gửi lại mã xác nhận mới');
+//         modals.closeAll();
+//       },
+//       onError: () => NotifyUtils.simpleFailed('Thay đổi email không thành công'),
+//     }
+//   );
 
-  const handleFormSubmit = form.onSubmit((formValues) => {
-    if (userId) {
-      changeRegistrationEmailApi.mutate({ userId: userId, email: formValues.email });
-    }
-  });
+//   const handleFormSubmit = form.onSubmit((formValues) => {
+//     if (userId) {
+//       changeRegistrationEmailApi.mutate({ userId: userId, email: formValues.email });
+//     }
+//   });
 
-  return (
-    <form onSubmit={handleFormSubmit}>
-      <Stack>
-        <TextInput
-          data-autofocus
-          required
-          radius="md"
-          label="Email mới"
-          placeholder="Nhập email mới"
-          {...form.getInputProps('email')}
-        />
-        <Group position="right">
-          <Button radius="md" variant="default" onClick={modals.closeAll}>
-            Đóng
-          </Button>
-          <Button
-            radius="md"
-            type="submit"
-            disabled={MiscUtils.isEquals(initialFormValues, form.values) || changeRegistrationEmailApi.isLoading}
-          >
-            Thay đổi và Gửi
-          </Button>
-        </Group>
-      </Stack>
-    </form>
-  );
-}
+//   return (
+//     <form onSubmit={handleFormSubmit}>
+//       <Stack>
+//         <TextInput
+//           data-autofocus
+//           required
+//           radius="md"
+//           label="Email mới"
+//           placeholder="Nhập email mới"
+//           {...form.getInputProps('email')}
+//         />
+//         <Group position="right">
+//           <Button radius="md" variant="default" onClick={modals.closeAll}>
+//             Đóng
+//           </Button>
+//           <Button
+//             radius="md"
+//             type="submit"
+//             disabled={MiscUtils.isEquals(initialFormValues, form.values) || changeRegistrationEmailApi.isLoading}
+//           >
+//             Thay đổi và Gửi
+//           </Button>
+//         </Group>
+//       </Stack>
+//     </form>
+//   );
+// }
 
 export default ClientSignup;

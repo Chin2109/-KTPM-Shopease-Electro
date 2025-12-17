@@ -1,4 +1,4 @@
-import { ClientCategoryResponse, ClientListedProductResponse } from 'types';
+import { ClientCategoryResponse,  } from 'types';
 import { MessageResponse } from 'models/Message';
 
 class MockUtils {
@@ -349,19 +349,19 @@ class MockUtils {
     },
   };
 
-  static sampleProduct: ClientListedProductResponse = {
-    productId: 1,
-    productName: 'Lenovo Legion 5 Pro 2022',
-    productSlug: 'lenovo-legion-5-pro-2022',
-    productThumbnail: 'https://dummyimage.com/400x400/e8e8e8/6e6e6e.png',
-    productPriceRange: [10_000_000, 12_000_000],
-    productVariants: [],
-    productSaleable: true,
-    productPromotion: {
-      promotionId: 1,
-      promotionPercent: 10,
-    },
-  };
+  // static sampleProduct: ClientListedProductResponse = {
+  //   productId: 1,
+  //   productName: 'Lenovo Legion 5 Pro 2022',
+  //   productSlug: 'lenovo-legion-5-pro-2022',
+  //   productThumbnail: 'https://dummyimage.com/400x400/e8e8e8/6e6e6e.png',
+  //   productPriceRange: [10_000_000, 12_000_000],
+  //   productVariants: [],
+  //   productSaleable: true,
+  //   productPromotion: {
+  //     promotionId: 1,
+  //     promotionPercent: 10,
+  //   },
+  // };
 
   static sampleMessages: MessageResponse[] = [
     {

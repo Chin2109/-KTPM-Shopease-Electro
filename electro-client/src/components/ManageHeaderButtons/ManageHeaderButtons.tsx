@@ -24,14 +24,14 @@ function ManageHeaderButtons(props: ManageHeaderButtonsProps) {
       >
         Thêm mới
       </Button>
-      <Button
+      {/* <Button
         variant="outline"
         color="red"
         leftIcon={<Trash/>}
         onClick={handleDeleteBatchEntitiesButton}
       >
         Xóa hàng loạt
-      </Button>
+      </Button> */}
     </Group>
   );
 }

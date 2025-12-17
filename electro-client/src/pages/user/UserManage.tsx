@@ -1,14 +1,14 @@
 import React from 'react';
 import { Avatar, Badge, Highlight, Stack } from '@mantine/core';
 import {
-  FilterPanel,
+  // FilterPanel,
   ManageHeader,
-  ManageHeaderButtons,
+  // ManageHeaderButtons,
   ManageHeaderTitle,
   ManageMain,
   ManagePagination,
-  ManageTable,
-  SearchPanel
+  ManageTable
+  // SearchPanel
 } from 'components';
 import DateUtils from 'utils/DateUtils';
 import { UserResponse } from 'models/User';
@@ -152,16 +152,16 @@ function UserManage() {
           titleLinks={UserConfigs.manageTitleLinks}
           title={UserConfigs.manageTitle}
         />
-        <ManageHeaderButtons
+        {/* <ManageHeaderButtons
           listResponse={listResponse}
           resourceUrl={UserConfigs.resourceUrl}
           resourceKey={UserConfigs.resourceKey}
-        />
+        /> */}
       </ManageHeader>
 
-      <SearchPanel/>
+      {/* <SearchPanel/>
 
-      <FilterPanel/>
+      <FilterPanel/> */}
 
       <ManageMain
         listResponse={listResponse}

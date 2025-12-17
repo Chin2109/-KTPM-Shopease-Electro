@@ -2,9 +2,7 @@ import { EntityPropertySchema, EntityPropertyType, SelectOption } from 'types';
 import { ListResponse } from 'utils/FetchUtils';
 import {
   Box,
-  BrandPaypal,
   Briefcase,
-  Cash,
   Cpu,
   DeviceGamepad2,
   DeviceLaptop,
@@ -16,7 +14,7 @@ import {
   Keyboard,
   Mouse
 } from 'tabler-icons-react';
-import { PaymentMethodType } from 'models/PaymentMethod';
+// import { PaymentMethodType } from 'models/PaymentMethod';
 
 class PageConfigs {
   static properties = {
@@ -98,15 +96,15 @@ class PageConfigs {
     }
   );
 
-  static paymentMethodIconMap: Record<PaymentMethodType, Icon> = {
-    [PaymentMethodType.CASH]: Cash,
-    [PaymentMethodType.PAYPAL]: BrandPaypal,
-  };
+  // static paymentMethodIconMap: Record<PaymentMethodType, Icon> = {
+  //   [PaymentMethodType.CASH]: Cash,
+  //   [PaymentMethodType.PAYPAL]: BrandPaypal,
+  // };
 
-  static paymentMethodNameMap: Record<PaymentMethodType, string> = {
-    [PaymentMethodType.CASH]: 'Thanh toán tiền mặt',
-    [PaymentMethodType.PAYPAL]: 'Thanh toán PayPal',
-  };
+  // static paymentMethodNameMap: Record<PaymentMethodType, string> = {
+  //   [PaymentMethodType.CASH]: 'Thanh toán tiền mặt',
+  //   [PaymentMethodType.PAYPAL]: 'Thanh toán PayPal',
+  // };
 }
 
 export default PageConfigs;

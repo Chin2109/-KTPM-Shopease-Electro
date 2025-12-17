@@ -187,7 +187,7 @@ function ClientHeader() {
                 </>
               )}
 
-              <Tooltip label="Thông báo" position="bottom">
+              {/* <Tooltip label="Thông báo" position="bottom">
                 <UnstyledButton onClick={handleNotificationButton}>
                   <Indicator
                     size={14}
@@ -205,7 +205,7 @@ function ClientHeader() {
                     </Group>
                   </Indicator>
                 </UnstyledButton>
-              </Tooltip>
+              </Tooltip> */}
 
               <Menu
                 placement="end"
@@ -247,7 +247,7 @@ function ClientHeader() {
                     >
                       Thiết đặt
                     </Menu.Item>
-                    <Menu.Item
+                    {/* <Menu.Item
                       icon={<Star size={14} />}
                       component={Link}
                       to="/user/review"
@@ -281,7 +281,7 @@ function ClientHeader() {
                       to="/user/chat"
                     >
                       Yêu cầu tư vấn
-                    </Menu.Item>
+                    </Menu.Item> */}
                     <Menu.Item
                       color="pink"
                       icon={<Logout size={14} />}
@@ -313,7 +313,7 @@ function ClientHeader() {
             </Group>
           </Group>
           <Group position="apart" mb="md">
-            <Group spacing={theme.spacing.xs / 2}>
+            {/* <Group spacing={theme.spacing.xs / 2}>
               <Popover
                 opened={openedCategoryMenu}
                 onClose={() => setOpenedCategoryMenu(false)}
@@ -343,15 +343,15 @@ function ClientHeader() {
               <Button variant="subtle" color="pink" radius="md">
                 Khuyến mại
               </Button>
-            </Group>
-            <Group spacing="xs">
+            </Group> */}
+            {/* <Group spacing="xs">
               <Badge color="pink" size="xs" variant="filled">
                 Hot
               </Badge>
               <Text size="sm" color="dimmed">
                 Miễn phí giao hàng cho đơn hàng trên 1 triệu đồng
               </Text>
-            </Group>
+            </Group> */}
           </Group>
         </Stack>
       </Container>
