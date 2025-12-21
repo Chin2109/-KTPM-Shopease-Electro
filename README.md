@@ -1,3 +1,11 @@
+## Thông tin nhóm & giảng viên hướng dẫn
+
+| Vai trò | Họ và tên | MSSV | Lớp |
+|------|---------|------|------|
+| Sinh viên | Trang Gia Huy | 3122411068 | DCT122C3 |
+| Sinh viên | Nguyễn Lê Quỳnh Hương | 3122411078 | DCT122C3 |
+| **Giảng viên hướng dẫn** | **TS. Đỗ Như Tài** |  |  |
+
 # Giới thiệu
 
 Công ty Electro là doanh nghiệp kinh doanh thiết bị điện tử. Hiện nay, công ty có nhu cầu mở rộng kênh bán hàng, hướng đến triển khai một website thương mại điện tử cho riêng công ty.
