@@ -13,7 +13,7 @@ RUN mvn clean package -DskipTests
 
 
 # 🚀 Stage 2: Run Spring Boot app
-FROM openjdk:11-jdk-slim
+FROM eclipse-temurin:11-jdk-jammy
 
 # Cài đặt gói phụ thuộc tối thiểu
 RUN apt-get update \

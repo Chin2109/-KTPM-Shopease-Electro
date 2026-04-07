@@ -21,6 +21,7 @@ import com.electro.entity.general.NotificationType;
 import com.electro.entity.order.Order;
 import com.electro.entity.order.OrderResource;
 import com.electro.entity.order.OrderVariant;
+import com.electro.entity.product.Serial;
 import com.electro.entity.promotion.Promotion;
 import com.electro.entity.waybill.Waybill;
 import com.electro.entity.waybill.WaybillLog;
@@ -31,6 +32,7 @@ import com.electro.repository.authentication.UserRepository;
 import com.electro.repository.cart.CartRepository;
 import com.electro.repository.general.NotificationRepository;
 import com.electro.repository.order.OrderRepository;
+import com.electro.repository.product.SerialRepository;
 import com.electro.repository.promotion.PromotionRepository;
 import com.electro.repository.waybill.WaybillLogRepository;
 import com.electro.repository.waybill.WaybillRepository;
@@ -65,6 +67,7 @@ public class OrderServiceImpl implements OrderService {
     private final UserRepository userRepository;
     private final CartRepository cartRepository;
     private final PromotionRepository promotionRepository;
+    private final SerialRepository serialRepository;
 
     @Override
     public ClientConfirmedOrderResponse createClientOrder(ClientSimpleOrderRequest request) {
@@ -138,7 +141,8 @@ public class OrderServiceImpl implements OrderService {
 
         // (3) Kiểm tra hình thức thanh toán
         if (request.getPaymentMethodType() == PaymentMethodType.CASH) {
-            orderRepository.save(order);
+            Order savedOrder = orderRepository.save(order);
+            assignSerialToOrder(savedOrder);
         } else if (request.getPaymentMethodType() == PaymentMethodType.PAYPAL) {
             try {
                // TODO: handle paypal related operation
@@ -161,4 +165,26 @@ public class OrderServiceImpl implements OrderService {
         return price * (100 - discount) / 100;
     }
 
+    private void assignSerialToOrder(Order order) {
+        for (OrderVariant ov : order.getOrderVariants()) {
+
+            List<Serial> serials = serialRepository
+                    .findTopNByVariantIdAndStatus(
+                            ov.getVariant().getId(),
+                            0,
+                            ov.getQuantity()
+                    );
+
+            if (serials.size() < ov.getQuantity()) {
+                throw new RuntimeException("Không đủ hàng (serial)");
+            }
+
+            for (Serial serial : serials) {
+                serial.setStatus(1); // sold
+                serial.setOrder(order);
+            }
+
+            serialRepository.saveAll(serials);
+        }
+    }
 }

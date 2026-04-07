@@ -34,4 +34,6 @@ public class DocketVariantResponse {
             private String slug;
         }
     }
+
+
 }
