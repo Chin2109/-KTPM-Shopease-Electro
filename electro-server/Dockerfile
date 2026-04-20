@@ -1,38 +1,35 @@
-
-#Stage 1: Build Spring Boot jar
+# ===============================
+# Stage 1: Build Spring Boot jar
+# ===============================
 FROM maven:3.9.6-eclipse-temurin-11 AS build
 
-# Đặt thư mục làm việc trong container
+# Thư mục làm việc
 WORKDIR /app
 
-# Sao chép toàn bộ source code vào container
+# Copy toàn bộ source
 COPY . .
 
-# Build project (bỏ qua test để build nhanh hơn)
+# Build (bỏ test cho nhanh)
 RUN mvn clean package -DskipTests
 
 
-# 🚀 Stage 2: Run Spring Boot app
-FROM openjdk:11-jdk-slim
+# ===============================
+# Stage 2: Run Spring Boot app
+# ===============================
+FROM eclipse-temurin:11-jdk-jammy
 
-# Cài đặt gói phụ thuộc tối thiểu
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends netcat locales \
-    && apt-get clean \
-    && locale-gen C.UTF-8
+# Thư mục chạy app
+WORKDIR /app
 
-# Đặt thư mục làm việc mặc định
-WORKDIR /electro-server
+# Copy file jar từ stage build
+COPY --from=build /app/target/*.jar app.jar
 
-# Sao chép file .jar đã build từ stage 1 sang
-COPY --from=build /app/target/electro-0.0.1-SNAPSHOT.jar /electro-server/
-
-# Thiết lập ngôn ngữ và locale
+# Thiết lập encoding
 ENV LANG=C.UTF-8
 ENV LC_ALL=C.UTF-8
 
-# Mở port cho ứng dụng Spring Boot
+# Expose port
 EXPOSE 8085
 
-# Lệnh khởi chạy ứng dụng
-ENTRYPOINT ["java", "-jar", "electro-0.0.1-SNAPSHOT.jar"]
+# Run app
+ENTRYPOINT ["java", "-jar", "app.jar"]

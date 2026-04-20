@@ -15,25 +15,25 @@ import {
   Stack,
   Text,
   UnstyledButton,
-  useMantineTheme
-} from '@mantine/core';
-import { Link } from 'react-router-dom';
-import MiscUtils from 'utils/MiscUtils';
-import { ClientCarousel, ReviewStarGroup } from 'components';
-import { BellPlus, Heart, PhotoOff, ShoppingCart } from 'tabler-icons-react';
-import React, { useRef, useState } from 'react';
+  useMantineTheme,
+} from "@mantine/core";
+import { ClientCarousel, ReviewStarGroup } from "components";
+import useCreatePreorderApi from "hooks/use-create-preorder-api";
+import useCreateWishApi from "hooks/use-create-wish-api";
+import useSaveCartApi from "hooks/use-save-cart-api";
+import React, { useRef, useState } from "react";
+import { Link } from "react-router-dom";
+import useAuthStore from "stores/use-auth-store";
+import { BellPlus, Heart, PhotoOff, ShoppingCart } from "tabler-icons-react";
 import {
   ClientCartRequest,
   ClientPreorderRequest,
   ClientProductResponse,
   ClientWishRequest,
-  UpdateQuantityType
-} from 'types';
-import useCreateWishApi from 'hooks/use-create-wish-api';
-import NotifyUtils from 'utils/NotifyUtils';
-import useAuthStore from 'stores/use-auth-store';
-import useCreatePreorderApi from 'hooks/use-create-preorder-api';
-import useSaveCartApi from 'hooks/use-save-cart-api';
+  UpdateQuantityType,
+} from "types";
+import MiscUtils from "utils/MiscUtils";
+import NotifyUtils from "utils/NotifyUtils";
 
 interface ClientProductIntroProps {
   product: ClientProductResponse;
@@ -60,7 +60,7 @@ function ClientProductIntro({ product }: ClientProductIntroProps) {
 
   const handleCreateWishButton = () => {
     if (!user) {
-      NotifyUtils.simple('Vui lòng đăng nhập để sử dụng chức năng');
+      NotifyUtils.simple("Vui lòng đăng nhập để sử dụng chức năng");
     } else {
       const clientWishRequest: ClientWishRequest = {
         userId: user.id,
@@ -72,7 +72,7 @@ function ClientProductIntro({ product }: ClientProductIntroProps) {
 
   const handleCreatePreorderButton = () => {
     if (!user) {
-      NotifyUtils.simple('Vui lòng đăng nhập để sử dụng chức năng');
+      NotifyUtils.simple("Vui lòng đăng nhập để sử dụng chức năng");
     } else {
       const clientPreorderRequest: ClientPreorderRequest = {
         userId: user.id,
@@ -85,7 +85,7 @@ function ClientProductIntro({ product }: ClientProductIntroProps) {
 
   const handleAddToCartButton = () => {
     if (!user) {
-      NotifyUtils.simple('Vui lòng đăng nhập để sử dụng chức năng');
+      NotifyUtils.simple("Vui lòng đăng nhập để sử dụng chức năng");
     } else {
       const cartRequest: ClientCartRequest = {
         cartId: currentCartId,
@@ -100,11 +100,15 @@ function ClientProductIntro({ product }: ClientProductIntroProps) {
         updateQuantityType: UpdateQuantityType.INCREMENTAL,
       };
       saveCartApi.mutate(cartRequest, {
-        onSuccess: () => NotifyUtils.simpleSuccess(
-          <Text inherit>
-            Đã thêm mặt hàng vừa chọn vào <Anchor component={Link} to="/cart" inherit>giỏ hàng</Anchor>
-          </Text>
-        ),
+        onSuccess: () =>
+          NotifyUtils.simpleSuccess(
+            <Text inherit>
+              Đã thêm mặt hàng vừa chọn vào{" "}
+              <Anchor component={Link} to="/cart" inherit>
+                giỏ hàng
+              </Anchor>
+            </Text>,
+          ),
       });
     }
   };
@@ -116,59 +120,70 @@ function ClientProductIntro({ product }: ClientProductIntroProps) {
           <Anchor component={Link} to="/">
             Trang chủ
           </Anchor>
-          {product.productCategory && MiscUtils.makeCategoryBreadcrumbs(product.productCategory).map(c => (
-            <Anchor key={c.categorySlug} component={Link} to={'/category/' + c.categorySlug}>
-              {c.categoryName}
-            </Anchor>
-          ))}
-          <Text color="dimmed">
-            {product.productName}
-          </Text>
+          {product.productCategory &&
+            MiscUtils.makeCategoryBreadcrumbs(product.productCategory).map(
+              (c) => (
+                <Anchor
+                  key={c.categorySlug}
+                  component={Link}
+                  to={"/category/" + c.categorySlug}
+                >
+                  {c.categoryName}
+                </Anchor>
+              ),
+            )}
+          <Text color="dimmed">{product.productName}</Text>
         </Breadcrumbs>
 
         <Grid gutter="lg">
           <Grid.Col md={6}>
-            {product.productImages.length > 0
-              ? (
-                <ClientCarousel>
-                  {product.productImages.map(image => (
-                    <Image
-                      key={image.id}
-                      radius="md"
-                      src={image.path}
-                      styles={{ image: { aspectRatio: '1 / 1' } }}
-                      withPlaceholder
-                    />
-                  ))}
-                </ClientCarousel>
-              )
-              : (
-                <Box
-                  sx={{
-                    borderRadius: theme.radius.md,
-                    width: '100%',
-                    height: 'auto',
-                    aspectRatio: '1 / 1',
-                    border: `2px dotted ${theme.colors.gray[5]}`,
-                  }}
-                >
-                  <Stack align="center" justify="center" sx={{ height: '100%' }}>
-                    <PhotoOff size={100} strokeWidth={1}/>
-                    <Text>Không có hình cho sản phẩm này</Text>
-                  </Stack>
-                </Box>
-              )}
+            {product.productImages.length > 0 ? (
+              <ClientCarousel>
+                {product.productImages.map((image) => (
+                  <Image
+                    key={image.id}
+                    radius="md"
+                    src={image.path}
+                    styles={{ image: { aspectRatio: "1 / 1" } }}
+                    withPlaceholder
+                  />
+                ))}
+              </ClientCarousel>
+            ) : (
+              <Box
+                sx={{
+                  borderRadius: theme.radius.md,
+                  width: "100%",
+                  height: "auto",
+                  aspectRatio: "1 / 1",
+                  border: `2px dotted ${theme.colors.gray[5]}`,
+                }}
+              >
+                <Stack align="center" justify="center" sx={{ height: "100%" }}>
+                  <PhotoOff size={100} strokeWidth={1} />
+                  <Text>Không có hình cho sản phẩm này</Text>
+                </Stack>
+              </Box>
+            )}
           </Grid.Col>
           <Grid.Col md={6}>
             <Stack spacing="lg">
-              <Stack spacing={2} sx={{ alignItems: 'start' }}>
-                {!product.productSaleable && <Badge color="red" variant="filled" mb={5}>Hết hàng</Badge>}
+              <Stack spacing={2} sx={{ alignItems: "start" }}>
+                {!product.productSaleable && (
+                  <Badge color="red" variant="filled" mb={5}>
+                    Hết hàng
+                  </Badge>
+                )}
                 {product.productBrand && (
                   <Group spacing={5}>
                     <Text size="sm">Thương hiệu:</Text>
-                    <Anchor component={Link} to={'/brand/' + product.productBrand.brandId} size="sm">
+                    <Text
+                      size="sm"
+                      weight={500}
+                      sx={{ color: "#3b82f6", cursor: "pointer" }}
+                    >
                       {product.productBrand.brandName}
-                    </Anchor>
+                    </Text>
                   </Group>
                 )}
                 <Text sx={{ fontSize: 26 }} weight={500}>
@@ -176,8 +191,12 @@ function ClientProductIntro({ product }: ClientProductIntroProps) {
                 </Text>
                 <Group mt={7.5} spacing="lg">
                   <Group spacing="xs">
-                    <ReviewStarGroup ratingScore={product.productAverageRatingScore}/>
-                    <Text size="sm">{product.productCountReviews} đánh giá</Text>
+                    <ReviewStarGroup
+                      ratingScore={product.productAverageRatingScore}
+                    />
+                    <Text size="sm">
+                      {product.productCountReviews} đánh giá
+                    </Text>
                   </Group>
                   {/* TODO: Doanh số sản phẩm */}
                   {/*<Group spacing={5}>*/}
@@ -187,28 +206,41 @@ function ClientProductIntro({ product }: ClientProductIntroProps) {
                 </Group>
               </Stack>
 
-              {product.productShortDescription && <Text color="dimmed">{product.productShortDescription}</Text>}
+              {product.productShortDescription && (
+                <Text color="dimmed">{product.productShortDescription}</Text>
+              )}
 
               <Box
                 sx={{
-                  backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.gray[0],
+                  backgroundColor:
+                    theme.colorScheme === "dark"
+                      ? theme.colors.dark[5]
+                      : theme.colors.gray[0],
                   borderRadius: theme.radius.md,
-                  padding: '16px 20px',
+                  padding: "16px 20px",
                 }}
               >
                 <Group>
                   <Text sx={{ fontSize: 24 }} weight={700} color="pink">
                     {MiscUtils.formatPrice(
                       MiscUtils.calculateDiscountedPrice(
-                        product.productVariants[selectedVariantIndex]?.variantPrice,
-                        product.productPromotion ? product.productPromotion.promotionPercent : 0
-                      )
-                    )} ₫
+                        product.productVariants[selectedVariantIndex]
+                          ?.variantPrice,
+                        product.productPromotion
+                          ? product.productPromotion.promotionPercent
+                          : 0,
+                      ),
+                    )}{" "}
+                    ₫
                   </Text>
                   {product.productPromotion && (
                     <>
-                      <Text sx={{ textDecoration: 'line-through' }}>
-                        {MiscUtils.formatPrice(product.productVariants[selectedVariantIndex]?.variantPrice)} ₫
+                      <Text sx={{ textDecoration: "line-through" }}>
+                        {MiscUtils.formatPrice(
+                          product.productVariants[selectedVariantIndex]
+                            ?.variantPrice,
+                        )}{" "}
+                        ₫
                       </Text>
                       <Badge color="pink" size="lg" variant="filled">
                         -{product.productPromotion.promotionPercent}%
@@ -220,64 +252,100 @@ function ClientProductIntro({ product }: ClientProductIntroProps) {
 
               <Stack spacing="xs">
                 <Text weight={500}>Phiên bản</Text>
-                {product.productVariants.length > 0
-                  ? product.productVariants.some(variant => variant.variantProperties)
-                    ? (
-                      <Group>
-                        {product.productVariants.map((variant, index) => (
-                          <UnstyledButton
-                            key={variant.variantId}
-                            sx={{
-                              borderRadius: theme.radius.md,
-                              padding: '7.5px 15px',
-                              border: `2px solid ${theme.colorScheme === 'dark'
-                                ? (index === selectedVariantIndex ? theme.colors.blue[9] : theme.colors.dark[3])
-                                : (index === selectedVariantIndex ? theme.colors.blue[4] : theme.colors.gray[2])}`,
-                              backgroundColor: index === selectedVariantIndex
-                                ? (theme.colorScheme === 'dark'
+                {product.productVariants.length > 0 ? (
+                  product.productVariants.some(
+                    (variant) => variant.variantProperties,
+                  ) ? (
+                    <Group>
+                      {product.productVariants.map((variant, index) => (
+                        <UnstyledButton
+                          key={variant.variantId}
+                          sx={{
+                            borderRadius: theme.radius.md,
+                            padding: "7.5px 15px",
+                            border: `2px solid ${
+                              theme.colorScheme === "dark"
+                                ? index === selectedVariantIndex
+                                  ? theme.colors.blue[9]
+                                  : theme.colors.dark[3]
+                                : index === selectedVariantIndex
+                                  ? theme.colors.blue[4]
+                                  : theme.colors.gray[2]
+                            }`,
+                            backgroundColor:
+                              index === selectedVariantIndex
+                                ? theme.colorScheme === "dark"
                                   ? theme.fn.rgba(theme.colors.blue[9], 0.25)
-                                  : theme.colors.blue[0])
-                                : 'unset',
-                              opacity: variant.variantInventory === 0 ? 0.5 : 'unset',
-                            }}
-                            onClick={() => handleSelectVariantButton(index)}
-                            disabled={selectedVariantIndex === index || variant.variantInventory === 0}
-                          >
-                            <Stack spacing={2.5}>
-                              <SimpleGrid cols={2} spacing={2.5}>
-                                {variant.variantProperties?.content.map(property => (
+                                  : theme.colors.blue[0]
+                                : "unset",
+                            opacity:
+                              variant.variantInventory === 0 ? 0.5 : "unset",
+                          }}
+                          onClick={() => handleSelectVariantButton(index)}
+                          disabled={
+                            selectedVariantIndex === index ||
+                            variant.variantInventory === 0
+                          }
+                        >
+                          <Stack spacing={2.5}>
+                            <SimpleGrid cols={2} spacing={2.5}>
+                              {variant.variantProperties?.content.map(
+                                (property) => (
                                   <React.Fragment key={property.id}>
                                     <Text size="sm">{property.name}</Text>
                                     <Text
                                       size="sm"
-                                      sx={{ textAlign: 'right', fontWeight: 500 }}
+                                      sx={{
+                                        textAlign: "right",
+                                        fontWeight: 500,
+                                      }}
                                     >
                                       {property.value}
                                     </Text>
                                   </React.Fragment>
-                                ))}
-                              </SimpleGrid>
-                              <Text size="xs" color="dimmed">Tồn kho: {variant.variantInventory}</Text>
-                              <Text size="xs" color="dimmed">Giá: {MiscUtils.formatPrice(
+                                ),
+                              )}
+                            </SimpleGrid>
+                            <Text size="xs" color="dimmed">
+                              Tồn kho: {variant.variantInventory}
+                            </Text>
+                            <Text size="xs" color="dimmed">
+                              Giá:{" "}
+                              {MiscUtils.formatPrice(
                                 MiscUtils.calculateDiscountedPrice(
                                   variant.variantPrice,
-                                  product.productPromotion ? product.productPromotion.promotionPercent : 0
-                                )
-                              )} ₫</Text>
-                            </Stack>
-                          </UnstyledButton>
-                        ))}
-                      </Group>
-                    )
-                    : <Text color="dimmed" size="sm">Sản phẩm chỉ có duy nhất một phiên bản mặc định</Text>
-                  : <Text color="dimmed" size="sm">Không có phiên bản nào</Text>}
+                                  product.productPromotion
+                                    ? product.productPromotion.promotionPercent
+                                    : 0,
+                                ),
+                              )}{" "}
+                              ₫
+                            </Text>
+                          </Stack>
+                        </UnstyledButton>
+                      ))}
+                    </Group>
+                  ) : (
+                    <Text color="dimmed" size="sm">
+                      Sản phẩm chỉ có duy nhất một phiên bản mặc định
+                    </Text>
+                  )
+                ) : (
+                  <Text color="dimmed" size="sm">
+                    Không có phiên bản nào
+                  </Text>
+                )}
               </Stack>
 
               {product.productSaleable && (
                 <Stack spacing="xs">
                   <Text weight={500}>Số lượng</Text>
                   <Group spacing={5}>
-                    <ActionIcon size={36} variant="default" onClick={() => quantityInputHandlers.current?.decrement()}>
+                    <ActionIcon
+                      size={36}
+                      variant="default"
+                      onClick={() => quantityInputHandlers.current?.decrement()}
+                    >
                       –
                     </ActionIcon>
 
@@ -286,12 +354,19 @@ function ClientProductIntro({ product }: ClientProductIntroProps) {
                       value={quantity}
                       onChange={(value) => setQuantity(value || 1)}
                       handlersRef={quantityInputHandlers}
-                      max={product.productVariants[selectedVariantIndex].variantInventory}
+                      max={
+                        product.productVariants[selectedVariantIndex]
+                          .variantInventory
+                      }
                       min={1}
-                      styles={{ input: { width: 54, textAlign: 'center' } }}
+                      styles={{ input: { width: 54, textAlign: "center" } }}
                     />
 
-                    <ActionIcon size={36} variant="default" onClick={() => quantityInputHandlers.current?.increment()}>
+                    <ActionIcon
+                      size={36}
+                      variant="default"
+                      onClick={() => quantityInputHandlers.current?.increment()}
+                    >
                       +
                     </ActionIcon>
                   </Group>
@@ -299,35 +374,33 @@ function ClientProductIntro({ product }: ClientProductIntroProps) {
               )}
 
               <Group mt={theme.spacing.md}>
-                {!product.productSaleable
-                  ? (
-                    <Button
-                      radius="md"
-                      size="lg"
-                      color="teal"
-                      leftIcon={<BellPlus/>}
-                      onClick={handleCreatePreorderButton}
-                    >
-                      Đặt trước
-                    </Button>
-                  )
-                  : (
-                    <Button
-                      radius="md"
-                      size="lg"
-                      color="pink"
-                      leftIcon={<ShoppingCart/>}
-                      onClick={handleAddToCartButton}
-                    >
-                      Chọn mua
-                    </Button>
-                  )}
+                {!product.productSaleable ? (
+                  <Button
+                    radius="md"
+                    size="lg"
+                    color="teal"
+                    leftIcon={<BellPlus />}
+                    onClick={handleCreatePreorderButton}
+                  >
+                    Đặt trước
+                  </Button>
+                ) : (
+                  <Button
+                    radius="md"
+                    size="lg"
+                    color="pink"
+                    leftIcon={<ShoppingCart />}
+                    onClick={handleAddToCartButton}
+                  >
+                    Chọn mua
+                  </Button>
+                )}
                 <Button
                   radius="md"
                   size="lg"
                   color="pink"
                   variant="outline"
-                  leftIcon={<Heart/>}
+                  leftIcon={<Heart />}
                   onClick={handleCreateWishButton}
                 >
                   Yêu thích

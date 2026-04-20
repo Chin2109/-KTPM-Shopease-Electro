@@ -8,6 +8,9 @@ export interface UserResponse extends BaseResponse {
   email: string;
   phone: string;
   gender: 'M' | 'F';
+  groupName: string;
+  discountPercent: number;
+  description: string;
   address: AddressResponse;
   avatar: string | null;
   status: number;

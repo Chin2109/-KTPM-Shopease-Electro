@@ -3,7 +3,7 @@ import { Container, Stack, useMantineTheme } from '@mantine/core';
 import ClientHomeBanner from 'pages/client-home/ClientHomeBanner';
 import ClientHomeFeaturedCategories from 'pages/client-home/ClientHomeFeaturedCategories';
 import ClientHomeLatestProducts from 'pages/client-home/ClientHomeLatestProducts';
-import ClientHomeNewsletter from 'pages/client-home/ClientHomeNewsletter';
+// import ClientHomeNewsletter from 'pages/client-home/ClientHomeNewsletter';
 import useTitle from 'hooks/use-title';
 
 function ClientHome() {
@@ -18,7 +18,7 @@ function ClientHome() {
           <ClientHomeBanner/>
           <ClientHomeFeaturedCategories/>
           <ClientHomeLatestProducts/>
-          <ClientHomeNewsletter/>
+          {/* <ClientHomeNewsletter/> */}
         </Stack>
       </Container>
     </main>

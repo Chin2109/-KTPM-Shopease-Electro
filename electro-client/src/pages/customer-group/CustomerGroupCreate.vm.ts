@@ -3,6 +3,7 @@ import CustomerGroupConfigs from 'pages/customer-group/CustomerGroupConfigs';
 import { CustomerGroupRequest, CustomerGroupResponse } from 'models/CustomerGroup';
 import useCreateApi from 'hooks/use-create-api';
 import { SelectOption } from 'types';
+import React from 'react';
 
 function useCustomerGroupCreateViewModel() {
   const form = useForm({
@@ -19,6 +20,8 @@ function useCustomerGroupCreateViewModel() {
       description: formValues.description,
       color: formValues.color,
       status: Number(formValues.status),
+      minRewardPoint: formValues.minRewardPoint ? Number(formValues.minRewardPoint) : 0,
+      discountPercent: formValues.discountPercent ? Number(formValues.discountPercent) : 0,
     };
     createApi.mutate(requestBody);
   });
