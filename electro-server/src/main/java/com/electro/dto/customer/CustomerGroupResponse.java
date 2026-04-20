@@ -2,6 +2,8 @@ package com.electro.dto.customer;
 
 import lombok.Data;
 
+import javax.persistence.Column;
+import java.math.BigDecimal;
 import java.time.Instant;
 
 @Data
@@ -14,4 +16,6 @@ public class CustomerGroupResponse {
     private String description;
     private String color;
     private Integer status;
+    private Integer minRewardPoint;
+    private BigDecimal discountPercent;
 }

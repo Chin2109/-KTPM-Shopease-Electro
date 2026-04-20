@@ -10,4 +10,6 @@ public interface CustomerRepository extends JpaRepository<Customer, Long>, JpaSp
     @Query("SELECT COUNT(c.id) FROM Customer c")
     int countByCustomerId();
 
+    Customer findByUserUsername(String username);
+
 }

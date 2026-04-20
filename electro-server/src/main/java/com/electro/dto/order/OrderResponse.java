@@ -32,6 +32,8 @@ public class OrderResponse {
     private BigDecimal totalAmount;
     private BigDecimal tax;
     private BigDecimal shippingCost;
+    @Nullable
+    private BigDecimal discountPercent;
     private BigDecimal totalPay;
     private PaymentMethodType paymentMethodType;
     private Integer paymentStatus;

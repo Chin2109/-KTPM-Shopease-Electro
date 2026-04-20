@@ -7,6 +7,7 @@ import com.electro.entity.chat.Message;
 import com.electro.entity.chat.Room;
 import com.electro.entity.client.Preorder;
 import com.electro.entity.client.Wish;
+import com.electro.entity.customer.Customer;
 import com.electro.entity.general.Notification;
 import com.electro.entity.order.Order;
 import com.electro.entity.review.Review;
@@ -80,8 +81,8 @@ public class User extends BaseEntity {
 //    @OneToOne(mappedBy = "user")
 //    private Employee employee;
 //
-//    @OneToOne(mappedBy = "user")
-//    private Customer customer;
+    @OneToOne(mappedBy = "user")
+    private Customer customer;
 
     @OneToMany(mappedBy = "user")
     private List<Wish> wishes = new ArrayList<>();

@@ -69,19 +69,111 @@ public class OrderServiceImpl implements OrderService {
     private final PromotionRepository promotionRepository;
     private final SerialRepository serialRepository;
 
+//    @Override
+//    public ClientConfirmedOrderResponse createClientOrder(ClientSimpleOrderRequest request) {
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        String username = authentication.getName();
+//
+//        User user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException(username));
+//
+//        Cart cart = cartRepository.findByUsername(username)
+//                .orElseThrow(() -> new ResourceNotFoundException(ResourceName.CART, FieldName.USERNAME, username));
+//
+//        // (1) Tạo đơn hàng
+//        Order order = new Order();
+//
+//        order.setCode(RandomString.make(12).toUpperCase());
+//        order.setStatus(1); // Status 1: Đơn hàng mới
+//        order.setToName(user.getFullname());
+//        order.setToPhone(user.getPhone());
+//        order.setToAddress(user.getAddress().getLine());
+//        order.setToWardName(user.getAddress().getWard().getName());
+//        order.setToDistrictName(user.getAddress().getDistrict().getName());
+//        order.setToProvinceName(user.getAddress().getProvince().getName());
+//        order.setOrderResource((OrderResource) new OrderResource().setId(1L)); // Default OrderResource
+//        order.setUser(user);
+//
+//        order.setOrderVariants(cart.getCartVariants().stream()
+//                .map(cartVariant -> {
+//                    Promotion promotion = promotionRepository
+//                            .findActivePromotionByProductId(cartVariant.getVariant().getProduct().getId())
+//                            .stream()
+//                            .findFirst()
+//                            .orElse(null);
+//
+//                    double currentPrice = calculateDiscountedPrice(cartVariant.getVariant().getPrice(),
+//                            promotion == null ? 0 : promotion.getPercent());
+//
+//                    return new OrderVariant()
+//                            .setOrder(order)
+//                            .setVariant(cartVariant.getVariant())
+//                            .setPrice(BigDecimal.valueOf(currentPrice))
+//                            .setQuantity(cartVariant.getQuantity())
+//                            .setAmount(BigDecimal.valueOf(currentPrice).multiply(BigDecimal.valueOf(cartVariant.getQuantity())));
+//                })
+//                .collect(Collectors.toSet()));
+//
+//        // Calculate price values
+//        BigDecimal totalAmount = BigDecimal.valueOf(order.getOrderVariants().stream()
+//                .mapToDouble(orderVariant -> orderVariant.getAmount().doubleValue())
+//                .sum());
+//
+//        BigDecimal tax = BigDecimal.valueOf(AppConstants.DEFAULT_TAX);
+//
+//        BigDecimal shippingCost = BigDecimal.ZERO;
+//
+//        BigDecimal totalPay = totalAmount
+//                .add(totalAmount.multiply(tax).setScale(0, RoundingMode.HALF_UP))
+//                .add(shippingCost);
+//
+//        order.setTotalAmount(totalAmount);
+//        order.setTax(tax);
+//        order.setShippingCost(shippingCost);
+//        order.setTotalPay(totalPay);
+//        order.setPaymentMethodType(request.getPaymentMethodType());
+//        order.setPaymentStatus(1); // Status 1: Chưa thanh toán
+//
+//        // (2) Tạo response
+//        ClientConfirmedOrderResponse response = new ClientConfirmedOrderResponse();
+//
+//        response.setOrderCode(order.getCode());
+//        response.setOrderPaymentMethodType(order.getPaymentMethodType());
+//
+//        // (3) Kiểm tra hình thức thanh toán
+//        if (request.getPaymentMethodType() == PaymentMethodType.CASH) {
+//            Order savedOrder = orderRepository.save(order);
+//            assignSerialToOrder(savedOrder);
+//        } else if (request.getPaymentMethodType() == PaymentMethodType.PAYPAL) {
+//            try {
+//               // TODO: handle paypal related operation
+//                orderRepository.save(order);
+//            } catch (Exception e) {
+//                throw new RuntimeException("Cannot create PayPal transaction request!" + e);
+//            }
+//        } else {
+//            throw new RuntimeException("Cannot identify payment method");
+//        }
+//
+//        // (4) Vô hiệu cart
+//        cart.setStatus(2); // Status 2: Vô hiệu lực
+//        cartRepository.save(cart);
+//
+//        return response;
+//    }
+
     @Override
     public ClientConfirmedOrderResponse createClientOrder(ClientSimpleOrderRequest request) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
 
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException(username));
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException(username));
 
         Cart cart = cartRepository.findByUsername(username)
                 .orElseThrow(() -> new ResourceNotFoundException(ResourceName.CART, FieldName.USERNAME, username));
 
         // (1) Tạo đơn hàng
         Order order = new Order();
-
         order.setCode(RandomString.make(12).toUpperCase());
         order.setStatus(1); // Status 1: Đơn hàng mới
         order.setToName(user.getFullname());
@@ -90,9 +182,10 @@ public class OrderServiceImpl implements OrderService {
         order.setToWardName(user.getAddress().getWard().getName());
         order.setToDistrictName(user.getAddress().getDistrict().getName());
         order.setToProvinceName(user.getAddress().getProvince().getName());
-        order.setOrderResource((OrderResource) new OrderResource().setId(1L)); // Default OrderResource
+        order.setOrderResource((OrderResource) new OrderResource().setId(1L));
         order.setUser(user);
 
+        // Tính toán các variant
         order.setOrderVariants(cart.getCartVariants().stream()
                 .map(cartVariant -> {
                     Promotion promotion = promotionRepository
@@ -113,49 +206,59 @@ public class OrderServiceImpl implements OrderService {
                 })
                 .collect(Collectors.toSet()));
 
-        // Calculate price values
+        // Tính toán giá trị tài chính
         BigDecimal totalAmount = BigDecimal.valueOf(order.getOrderVariants().stream()
                 .mapToDouble(orderVariant -> orderVariant.getAmount().doubleValue())
                 .sum());
 
-        BigDecimal tax = BigDecimal.valueOf(AppConstants.DEFAULT_TAX);
+        // Áp dụng discountPercent từ request
+        BigDecimal discountPercent = (request.getDiscountPercent() != null) ? request.getDiscountPercent() : BigDecimal.ZERO;
+        order.setDiscountPercent(discountPercent);
+
+        // Tính toán số tiền sau khi giảm giá
+        BigDecimal discountAmount = totalAmount.multiply(discountPercent)
+                .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
+        BigDecimal amountAfterDiscount = totalAmount.subtract(discountAmount);
+
+        // Thuế (giả định tính trên giá trị đã trừ chiết khấu)
+        BigDecimal taxRate = BigDecimal.valueOf(AppConstants.DEFAULT_TAX);
+        BigDecimal tax = amountAfterDiscount.multiply(taxRate).setScale(0, RoundingMode.HALF_UP);
 
         BigDecimal shippingCost = BigDecimal.ZERO;
 
-        BigDecimal totalPay = totalAmount
-                .add(totalAmount.multiply(tax).setScale(0, RoundingMode.HALF_UP))
-                .add(shippingCost);
+        // Tổng thanh toán
+        BigDecimal totalPay = amountAfterDiscount.add(tax).add(shippingCost);
 
         order.setTotalAmount(totalAmount);
         order.setTax(tax);
         order.setShippingCost(shippingCost);
         order.setTotalPay(totalPay);
         order.setPaymentMethodType(request.getPaymentMethodType());
-        order.setPaymentStatus(1); // Status 1: Chưa thanh toán
+        order.setPaymentStatus(1); // 1: Chưa thanh toán
 
         // (2) Tạo response
         ClientConfirmedOrderResponse response = new ClientConfirmedOrderResponse();
-
         response.setOrderCode(order.getCode());
         response.setOrderPaymentMethodType(order.getPaymentMethodType());
+        response.setAmount(order.getTotalAmount());
 
-        // (3) Kiểm tra hình thức thanh toán
+        // (3) Kiểm tra hình thức thanh toán và lưu
         if (request.getPaymentMethodType() == PaymentMethodType.CASH) {
             Order savedOrder = orderRepository.save(order);
             assignSerialToOrder(savedOrder);
         } else if (request.getPaymentMethodType() == PaymentMethodType.PAYPAL) {
             try {
-               // TODO: handle paypal related operation
                 orderRepository.save(order);
+                // TODO: handle paypal related operation
             } catch (Exception e) {
-                throw new RuntimeException("Cannot create PayPal transaction request!" + e);
+                throw new RuntimeException("Cannot create PayPal transaction request: " + e.getMessage());
             }
         } else {
             throw new RuntimeException("Cannot identify payment method");
         }
 
         // (4) Vô hiệu cart
-        cart.setStatus(2); // Status 2: Vô hiệu lực
+        cart.setStatus(2);
         cartRepository.save(cart);
 
         return response;

@@ -11,6 +11,7 @@ import com.electro.mapper.general.NotificationMapper;
 import com.electro.repository.general.NotificationRepository;
 import com.electro.repository.reward.RewardLogRepository;
 import com.electro.repository.reward.RewardStrategyRepository;
+import com.electro.service.CustomerGroupService;
 import com.electro.service.general.NotificationService;
 import lombok.AllArgsConstructor;
 import org.springframework.expression.ExpressionParser;
@@ -28,6 +29,7 @@ public class RewardUtils {
     private NotificationRepository notificationRepository;
     private NotificationService notificationService;
     private NotificationMapper notificationMapper;
+    private CustomerGroupService customerGroupService;
 
     private static final ExpressionParser spelParser = new SpelExpressionParser();
 
@@ -55,6 +57,7 @@ public class RewardUtils {
                         .setNote(note);
 
                 rewardLogRepository.save(rewardLog);
+                customerGroupService.updateCustomerGroup(review.getUser().getUsername());
 
                 // (2) Save notification
                 Notification notification = new Notification()
@@ -96,6 +99,7 @@ public class RewardUtils {
                         .setNote(note);
 
                 rewardLogRepository.save(rewardLog);
+                customerGroupService.updateCustomerGroup(order.getUser().getUsername());
 
                 // (2) Save notification
                 Notification notification = new Notification()
