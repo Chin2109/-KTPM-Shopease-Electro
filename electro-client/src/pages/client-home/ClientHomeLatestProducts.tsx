@@ -78,9 +78,9 @@ function ClientHomeLatestProducts() {
             Sản phẩm mới nhất
           </Text>
         </Title>
-        <Button variant="light" leftIcon={<List size={16}/>} radius="md">
+        {/* <Button variant="light" leftIcon={<List size={16}/>} radius="md">
           Xem tất cả
-        </Button>
+        </Button> */}
       </Group>
 
       {resultFragment}

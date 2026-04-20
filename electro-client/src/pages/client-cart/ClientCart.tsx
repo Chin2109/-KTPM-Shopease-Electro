@@ -36,6 +36,7 @@ import {
   ClientSimpleOrderRequest,
   CollectionWrapper,
   Empty,
+  PaymentCheckoutResponse,
   UpdateQuantityType
 } from 'types';
 import FetchUtils, { ErrorMessage } from 'utils/FetchUtils';
@@ -134,26 +135,53 @@ function ClientCart() {
   if (cartResponse && paymentMethodResponses) {
     let cart: ClientCartResponse;
 
-    if (Object.hasOwn(cartResponse, 'cartId')) {
+    if (Object.hasOwn(cartResponse, "cartId")) {
       cart = cartResponse as ClientCartResponse;
     } else {
       cart = { cartId: 0, cartItems: [] };
     }
 
     const totalAmount = cart.cartItems
-      .map(cartItem => cartItem.cartItemQuantity * MiscUtils.calculateDiscountedPrice(
-        cartItem.cartItemVariant.variantPrice,
-        cartItem.cartItemVariant.variantProduct.productPromotion
-          ? cartItem.cartItemVariant.variantProduct.productPromotion.promotionPercent
-          : 0
-      ))
+      .map(
+        (cartItem) =>
+          cartItem.cartItemQuantity *
+          MiscUtils.calculateDiscountedPrice(
+            cartItem.cartItemVariant.variantPrice,
+            cartItem.cartItemVariant.variantProduct.productPromotion
+              ? cartItem.cartItemVariant.variantProduct.productPromotion
+                  .promotionPercent
+              : 0,
+          ),
+      )
       .reduce((partialSum, a) => partialSum + a, 0);
 
-    const taxCost = Number((totalAmount * ApplicationConstants.DEFAULT_TAX).toFixed(0));
+    // 2. Lấy % giảm giá của member từ user store
+    const userDiscountPercent = user?.discountPercent || 0;
 
+    // 3. Tính số tiền được giảm cho member
+    const discountAmount = Math.round(
+      (totalAmount * userDiscountPercent) / 100,
+    );
+
+    // 4. Số tiền sau khi chiết khấu (Đây là căn cứ để tính thuế)
+    const amountAfterDiscount = totalAmount - discountAmount;
+
+    // 5. Thuế (Tính trên giá đã giảm)
+    const taxCost = Math.round(
+      amountAfterDiscount * ApplicationConstants.DEFAULT_TAX,
+    );
+
+    // 6. Phí vận chuyển
     const shippingCost = ApplicationConstants.DEFAULT_SHIPPING_COST;
 
-    const totalPay = totalAmount + taxCost + shippingCost;
+    // 7. Tổng thanh toán cuối cùng
+    const totalPay = amountAfterDiscount + taxCost + shippingCost;
+
+    // const taxCost = Number((totalAmount * ApplicationConstants.DEFAULT_TAX).toFixed(0));
+
+    // const shippingCost = ApplicationConstants.DEFAULT_SHIPPING_COST;
+
+    // const totalPay = totalAmount + taxCost + shippingCost;
 
     cartContentFragment = (
       <Grid>
@@ -163,24 +191,54 @@ function ClientCart() {
               <Table verticalSpacing="md" horizontalSpacing="lg">
                 <thead>
                   <tr>
-                    <th style={{ minWidth: 325 }}><Text weight="initial" size="sm" color="dimmed">Mặt hàng</Text></th>
-                    <th style={{ minWidth: 125 }}><Text weight="initial" size="sm" color="dimmed">Đơn giá</Text></th>
-                    <th style={{ minWidth: 150 }}><Text weight="initial" size="sm" color="dimmed">Số lượng</Text></th>
-                    <th style={{ minWidth: 125 }}><Text weight="initial" size="sm" color="dimmed">Thành tiền</Text></th>
-                    <th style={{ textAlign: 'center', minWidth: 80 }}>
-                      <Text weight="initial" size="sm" color="dimmed">Thao tác</Text>
+                    <th style={{ minWidth: 325 }}>
+                      <Text weight="initial" size="sm" color="dimmed">
+                        Mặt hàng
+                      </Text>
+                    </th>
+                    <th style={{ minWidth: 125 }}>
+                      <Text weight="initial" size="sm" color="dimmed">
+                        Đơn giá
+                      </Text>
+                    </th>
+                    <th style={{ minWidth: 150 }}>
+                      <Text weight="initial" size="sm" color="dimmed">
+                        Số lượng
+                      </Text>
+                    </th>
+                    <th style={{ minWidth: 125 }}>
+                      <Text weight="initial" size="sm" color="dimmed">
+                        Thành tiền
+                      </Text>
+                    </th>
+                    <th style={{ textAlign: "center", minWidth: 80 }}>
+                      <Text weight="initial" size="sm" color="dimmed">
+                        Thao tác
+                      </Text>
                     </th>
                   </tr>
                 </thead>
                 <tbody>
-                  {cart.cartItems
-                    .map(cartItem => <CartItemTableRow key={cartItem.cartItemVariant.variantId} cartItem={cartItem}/>)}
+                  {cart.cartItems.map((cartItem) => (
+                    <CartItemTableRow
+                      key={cartItem.cartItemVariant.variantId}
+                      cartItem={cartItem}
+                    />
+                  ))}
                   {cart.cartItems.length === 0 && (
                     <tr>
                       <td colSpan={5}>
-                        <Stack my={theme.spacing.xl} sx={{ alignItems: 'center', color: theme.colors.blue[6] }}>
-                          <Marquee size={125} strokeWidth={1}/>
-                          <Text size="xl" weight={500}>Chưa thêm mặt hàng nào</Text>
+                        <Stack
+                          my={theme.spacing.xl}
+                          sx={{
+                            alignItems: "center",
+                            color: theme.colors.blue[6],
+                          }}
+                        >
+                          <Marquee size={125} strokeWidth={1} />
+                          <Text size="xl" weight={500}>
+                            Chưa thêm mặt hàng nào
+                          </Text>
                         </Stack>
                       </td>
                     </tr>
@@ -196,62 +254,96 @@ function ClientCart() {
             <Card radius="md" shadow="sm" px="lg" pt="md" pb="lg">
               <Stack spacing="xs">
                 <Group position="apart">
-                  <Text weight={500} color="dimmed">Giao tới</Text>
-                  <Button size="xs" variant="light" compact component={Link} to="/user/setting/personal">
+                  <Text weight={500} color="dimmed">
+                    Giao tới
+                  </Text>
+                  <Button
+                    size="xs"
+                    variant="light"
+                    compact
+                    component={Link}
+                    to="/user/setting/personal"
+                  >
                     Thay đổi
                   </Button>
                 </Group>
                 <Stack spacing={3.5}>
                   <Text weight={500} size="sm">
                     {user?.fullname}
-                    <ThemeIcon size="xs" ml="xs" color="teal" title="Địa chỉ của người dùng đặt mua">
-                      <Home size={12}/>
+                    <ThemeIcon
+                      size="xs"
+                      ml="xs"
+                      color="teal"
+                      title="Địa chỉ của người dùng đặt mua"
+                    >
+                      <Home size={12} />
                     </ThemeIcon>
                   </Text>
-                  <Text weight={500} size="sm">{user?.phone}</Text>
+                  <Text weight={500} size="sm">
+                    {user?.phone}
+                  </Text>
                   <Text size="sm" color="dimmed">
-                    {[user?.address.line, user?.address.ward?.name, user?.address.district?.name, user?.address.province?.name]
+                    {[
+                      user?.address.line,
+                      user?.address.ward?.name,
+                      user?.address.district?.name,
+                      user?.address.province?.name,
+                    ]
                       .filter(Boolean)
-                      .join(', ')}
+                      .join(", ")}
                   </Text>
                 </Stack>
               </Stack>
             </Card>
 
-            <Card radius="md" shadow="sm" px="lg" pt="md" pb="lg">
+            {/* <Card radius="md" shadow="sm" px="lg" pt="md" pb="lg">
               <Stack spacing="xs">
-                <Text weight={500} color="dimmed">Hình thức giao hàng</Text>
+                <Text weight={500} color="dimmed">
+                  Hình thức giao hàng
+                </Text>
                 <RadioGroup value="ghn" orientation="vertical" size="sm">
                   <Radio
                     value="ghn"
-                    label={<Image src={MiscUtils.ghnLogoPath} styles={{ image: { maxWidth: 170 } }}/>}
+                    label={
+                      <Image
+                        src={MiscUtils.ghnLogoPath}
+                        styles={{ image: { maxWidth: 170 } }}
+                      />
+                    }
                   />
                 </RadioGroup>
               </Stack>
-            </Card>
+            </Card> */}
 
             <Card radius="md" shadow="sm" px="lg" pt="md" pb="lg">
               <Stack spacing="xs">
-                <Text weight={500} color="dimmed">Hình thức thanh toán</Text>
+                <Text weight={500} color="dimmed">
+                  Hình thức thanh toán
+                </Text>
                 <RadioGroup
                   value={currentPaymentMethod}
                   onChange={updateCurrentPaymentMethod}
                   orientation="vertical"
                   size="sm"
                 >
-                  {paymentMethodResponses.content.map(paymentMethod => {
-                    const PaymentMethodIcon = PageConfigs.paymentMethodIconMap[paymentMethod.paymentMethodCode];
+                  {paymentMethodResponses.content.map((paymentMethod) => {
+                    const PaymentMethodIcon =
+                      PageConfigs.paymentMethodIconMap[
+                        paymentMethod.paymentMethodCode
+                      ];
 
                     return (
                       <Radio
                         key={paymentMethod.paymentMethodId}
                         value={paymentMethod.paymentMethodCode}
-                        label={(
+                        label={
                           <Group spacing="xs">
-                            <PaymentMethodIcon size={24}/>
-                            <Text size="sm">{paymentMethod.paymentMethodName}</Text>
+                            <PaymentMethodIcon size={24} />
+                            <Text size="sm">
+                              {paymentMethod.paymentMethodName}
+                            </Text>
                           </Group>
-                        )}
+                        }
                       />
                     );
                   })}
@@ -263,24 +355,53 @@ function ClientCart() {
               <Stack spacing="xs">
                 <Stack spacing="sm">
                   <Group position="apart">
-                    <Text size="sm" color="dimmed">Tạm tính</Text>
-                    <Text size="sm" sx={{ textAlign: 'right' }}>{MiscUtils.formatPrice(totalAmount) + '\u00A0₫'}</Text>
+                    <Text size="sm" color="dimmed">
+                      Tạm tính
+                    </Text>
+                    <Text size="sm" sx={{ textAlign: "right" }}>
+                      {MiscUtils.formatPrice(totalAmount) + "\u00A0₫"}
+                    </Text>
                   </Group>
                   <Group position="apart">
-                    <Text size="sm" color="dimmed">Thuế (10%)</Text>
-                    <Text size="sm" sx={{ textAlign: 'right' }}>{MiscUtils.formatPrice(taxCost) + '\u00A0₫'}</Text>
+                    <Text size="sm" color="dimmed">
+                      Thuế (10%)
+                    </Text>
+                    <Text size="sm" sx={{ textAlign: "right" }}>
+                      {MiscUtils.formatPrice(taxCost) + "\u00A0₫"}
+                    </Text>
                   </Group>
+                  {userDiscountPercent > 0 && (
+                    <Group position="apart">
+                      <Text size="sm" color="teal" weight={500}>
+                        Giảm giá thành viên ({userDiscountPercent}%)
+                      </Text>
+                      <Text size="sm" color="teal" weight={500}>
+                        {"- " + MiscUtils.formatPrice(discountAmount) + " ₫"}
+                      </Text>
+                    </Group>
+                  )}
                   <Group position="apart">
                     <Group spacing="xs">
-                      <Text size="sm" weight={500}>Tổng tiền</Text>
-                      <Tooltip label="Chưa tính phí vận chuyển" withArrow sx={{ height: 20 }}>
+                      <Text size="sm" weight={500}>
+                        Tổng tiền
+                      </Text>
+                      <Tooltip
+                        label="Chưa tính phí vận chuyển"
+                        withArrow
+                        sx={{ height: 20 }}
+                      >
                         <ThemeIcon variant="light" color="blue" size="sm">
-                          <InfoCircle size={14}/>
+                          <InfoCircle size={14} />
                         </ThemeIcon>
                       </Tooltip>
                     </Group>
-                    <Text size="lg" weight={700} color="blue" sx={{ textAlign: 'right' }}>
-                      {MiscUtils.formatPrice(totalPay) + '\u00A0₫'}
+                    <Text
+                      size="lg"
+                      weight={700}
+                      color="blue"
+                      sx={{ textAlign: "right" }}
+                    >
+                      {MiscUtils.formatPrice(totalPay) + "\u00A0₫"}
                     </Text>
                   </Group>
                 </Stack>
@@ -289,7 +410,7 @@ function ClientCart() {
 
             <Button
               size="lg"
-              leftIcon={<ShoppingCart/>}
+              leftIcon={<ShoppingCart />}
               onClick={handleOrderButton}
               disabled={cart.cartItems.length === 0}
             >
@@ -491,13 +612,14 @@ function ConfirmedOrder() {
 
   const [checkoutPaypalStatus, setCheckoutPaypalStatus] = useState<'none' | 'success' | 'cancel'>('none');
 
-  const { currentPaymentMethod } = useAuthStore();
+
+  const { user, currentPaymentMethod } = useAuthStore();
 
   let contentFragment;
 
   useEffect(() => {
     if (checkoutPaypalStatus === 'none') {
-      const request: ClientSimpleOrderRequest = { paymentMethodType: currentPaymentMethod };
+      const request: ClientSimpleOrderRequest = { paymentMethodType: currentPaymentMethod, discountPercent: user?.discountPercent || 0 };
       createClientOrder(request);
     }
   }, [checkoutPaypalStatus, createClientOrder, currentPaymentMethod]);
@@ -518,8 +640,25 @@ function ConfirmedOrder() {
     }
   }, [clientConfirmedOrderResponse, newNotifications, newNotifications.length]);
 
-  const handlePaypalCheckoutButton = (checkoutLink: string) => {
-    window.open(checkoutLink, 'mywin', 'width=500,height=800');
+  const handlePaypalCheckoutButton = async ( orderCode: string, amount: number) => {
+    const cleanAmount = Math.round(amount);
+
+    try {
+
+const orderResponse = await FetchUtils.getWithToken<PaymentCheckoutResponse>(
+  ResourceURL.CLIENT_PAYMENT_VNPAY_CHECKOUT +
+    `?amount=${cleanAmount}&orderCode=${orderCode}`,
+);
+
+      const response = orderResponse as PaymentCheckoutResponse;
+      console.log("VNPAY Checkout Response:", response);
+
+      if (response.code === "ok" && response.paymentUrl) {
+        window.open(response.paymentUrl, "_blank", "width=500,height=800");
+      }
+    } catch (error) {
+      console.error("Lỗi gọi API VNPAY:", error);
+    }
   };
 
   if (isError) {
@@ -563,60 +702,71 @@ function ConfirmedOrder() {
 
   if (clientConfirmedOrderResponse && clientConfirmedOrderResponse.orderPaymentMethodType === PaymentMethodType.PAYPAL) {
     contentFragment = (
-      <Stack justify="space-between" sx={{ height: '100%' }}>
-        <Stack align="center" sx={{ alignItems: 'center', color: theme.colors.teal[6] }}>
-          <Check size={100} strokeWidth={1}/>
-          <Text sx={{ textAlign: 'center' }}>
+      <Stack justify="space-between" sx={{ height: "100%" }}>
+        <Stack
+          align="center"
+          sx={{ alignItems: "center", color: theme.colors.teal[6] }}
+        >
+          <Check size={100} strokeWidth={1} />
+          <Text sx={{ textAlign: "center" }}>
             <span>Đơn hàng </span>
             <Text weight={500} component="span">
               {clientConfirmedOrderResponse.orderCode}
             </Text>
             <span> đã được tạo!</span>
           </Text>
-          <Text color="dimmed" size="sm">Hoàn tất thanh toán PayPal bằng cách bấm nút dưới</Text>
+          <Text color="dimmed" size="sm">
+            Hoàn tất thanh toán bằng cách bấm nút dưới
+          </Text>
         </Stack>
-        {checkoutPaypalStatus === 'none'
-          ? (
+        {checkoutPaypalStatus === "none" ? (
+          <Button
+            fullWidth
+            mt="md"
+            onClick={() =>
+              handlePaypalCheckoutButton(
+                clientConfirmedOrderResponse?.orderCode,
+                clientConfirmedOrderResponse?.amount,
+              )
+            }
+          >
+            Thanh toán
+          </Button>
+        ) : checkoutPaypalStatus === "success" ? (
+          <Button
+            fullWidth
+            mt="md"
+            color="teal"
+            leftIcon={<Check />}
+            onClick={modals.closeAll}
+          >
+            Đã thanh toán thành công
+          </Button>
+        ) : (
+          <Stack spacing="sm">
             <Button
               fullWidth
               mt="md"
-              onClick={() => handlePaypalCheckoutButton(clientConfirmedOrderResponse.orderPaypalCheckoutLink || '')}
+              variant="outline"
+              color="pink"
+              leftIcon={<X size={16} />}
+              onClick={modals.closeAll}
             >
-              Thanh toán PayPal
+              Đã hủy thanh toán. Đóng hộp thoại này.
             </Button>
-          )
-          : (checkoutPaypalStatus === 'success')
-            ? (
-              <Button
-                fullWidth
-                mt="md"
-                color="teal"
-                leftIcon={<Check/>}
-                onClick={modals.closeAll}
-              >
-                Đã thanh toán thành công
-              </Button>
-            )
-            : (
-              <Stack spacing="sm">
-                <Button
-                  fullWidth
-                  mt="md"
-                  variant="outline"
-                  color="pink"
-                  leftIcon={<X size={16}/>}
-                  onClick={modals.closeAll}
-                >
-                  Đã hủy thanh toán. Đóng hộp thoại này.
-                </Button>
-                <Button
-                  fullWidth
-                  onClick={() => handlePaypalCheckoutButton(clientConfirmedOrderResponse.orderPaypalCheckoutLink || '')}
-                >
-                  Thanh toán PayPal lần nữa
-                </Button>
-              </Stack>
-            )}
+            <Button
+              fullWidth
+              onClick={() =>
+                handlePaypalCheckoutButton(
+                  clientConfirmedOrderResponse?.orderCode,
+                  clientConfirmedOrderResponse?.amount,
+                )
+              }
+            >
+              Thanh toán lần nữa
+            </Button>
+          </Stack>
+        )}
       </Stack>
     );
   }

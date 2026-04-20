@@ -13,14 +13,16 @@ public interface SecurityConstants {
             "/client-api/reviews/**",
             "/client-api/carts/**",
             "/client-api/orders/**",
-            "/client-api/chat/**"
+            "/client-api/chat/**",
+            "/client-api/payment/**"
     };
 
     String[] IGNORING_API_PATHS = {
             "/client-api/notifications/events",
             "/client-api/reviews/products/**",
             "/client-api/orders/success",
-            "/client-api/orders/cancel"
+            "/client-api/orders/cancel",
+            "/client-api/payment/**"
     };
 
     interface Role {

@@ -312,7 +312,7 @@ function ClientHeader() {
               </Menu>
             </Group>
           </Group>
-          <Group position="apart" mb="md">
+          {/* <Group position="apart" mb="md">
             <Group spacing={theme.spacing.xs / 2}>
               <Popover
                 opened={openedCategoryMenu}
@@ -352,7 +352,7 @@ function ClientHeader() {
                 Miễn phí giao hàng cho đơn hàng trên 1 triệu đồng
               </Text>
             </Group>
-          </Group>
+          </Group> */}
         </Stack>
       </Container>
     </header>

@@ -6,6 +6,7 @@ import useUpdateApi from 'hooks/use-update-api';
 import useGetByIdApi from 'hooks/use-get-by-id-api';
 import MiscUtils from 'utils/MiscUtils';
 import { SelectOption } from 'types';
+import React from "react";
 
 function useCustomerGroupUpdateViewModel(id: number) {
   const form = useForm({
@@ -26,6 +27,15 @@ function useCustomerGroupUpdateViewModel(id: number) {
         description: customerGroupResponse.description,
         color: customerGroupResponse.color,
         status: String(customerGroupResponse.status),
+        minRewardPoint:
+          customerGroupResponse.minRewardPoint != null
+            ? Number(customerGroupResponse.minRewardPoint)
+            : 0,
+
+        discountPercent:
+          customerGroupResponse.discountPercent != null
+            ? Number(customerGroupResponse.discountPercent)
+            : 0,
       };
       form.setValues(formValues);
       setPrevFormValues(formValues);
@@ -41,6 +51,8 @@ function useCustomerGroupUpdateViewModel(id: number) {
         description: formValues.description,
         color: formValues.color,
         status: Number(formValues.status),
+        minRewardPoint: Number(formValues.minRewardPoint),
+        discountPercent: Number(formValues.discountPercent),
       };
       updateApi.mutate(requestBody);
     }

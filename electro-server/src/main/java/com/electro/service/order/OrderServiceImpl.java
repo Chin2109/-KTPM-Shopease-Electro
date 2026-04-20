@@ -240,7 +240,7 @@ public class OrderServiceImpl implements OrderService {
         ClientConfirmedOrderResponse response = new ClientConfirmedOrderResponse();
         response.setOrderCode(order.getCode());
         response.setOrderPaymentMethodType(order.getPaymentMethodType());
-        response.setAmount(order.getTotalAmount());
+        response.setAmount(order.getTotalPay());
 
         // (3) Kiểm tra hình thức thanh toán và lưu
         if (request.getPaymentMethodType() == PaymentMethodType.CASH) {

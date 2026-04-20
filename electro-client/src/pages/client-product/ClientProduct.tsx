@@ -13,6 +13,7 @@ import ClientProductSpecification from 'pages/client-product/ClientProductSpecif
 import ClientProductDescription from 'pages/client-product/ClientProductDescription';
 import ClientProductReviews from 'pages/client-product/ClientProductReviews';
 import ClientProductRelatedProducts from 'pages/client-product/ClientProductRelatedProducts';
+import ClientProductGuarantee from './ClientProductGuarantee';
 
 function ClientProduct() {
   const theme = useMantineTheme();
@@ -39,11 +40,17 @@ function ClientProduct() {
 
           {product.productSpecifications && <ClientProductSpecification product={product}/>}
 
+          {product?.guaranteeName && <ClientProductGuarantee product={product}/>}
+
           {product.productDescription && <ClientProductDescription product={product}/>}
 
           <ClientProductReviews productSlug={slug as string}/>
 
           {product.productRelatedProducts.length > 0 && <ClientProductRelatedProducts product={product}/>}
+
+
+
+          
         </Stack>
       </Container>
     </main>

@@ -12,12 +12,12 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 
 @RestController
-@RequestMapping("/api/payment")
+@RequestMapping("/client-api/payment")
 @RequiredArgsConstructor
 public class PaymentController {
     private final PaymentService paymentService;
 
-    @GetMapping("/vn-pay")
+    @GetMapping("/vnpay")
     public ResponseEntity<PaymentDTO.VNPayResponse> pay(HttpServletRequest request,
                                                         @RequestParam("amount") long amount,
                                                         @RequestParam("orderCode") String orderCode) {

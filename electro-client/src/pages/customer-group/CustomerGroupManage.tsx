@@ -92,10 +92,18 @@ function CustomerGroupManage() {
         <td>{CustomerGroupConfigs.properties.color.label}</td>
         <td>
           <Group spacing="xs">
-            <ColorSwatch color={entity.color}/>
+            <ColorSwatch color={entity.color} />
             <Code>{entity.color.toLowerCase()}</Code>
           </Group>
         </td>
+      </tr>
+      <tr>
+        <td>{CustomerGroupConfigs.properties.minRewardPoint.label}</td>
+        <td>{entity.minRewardPoint}</td>
+      </tr>
+      <tr>
+        <td>{CustomerGroupConfigs.properties.discountPercent.label}</td>
+        <td>{entity.discountPercent}</td>
       </tr>
       <tr>
         <td>{CustomerGroupConfigs.properties.status.label}</td>

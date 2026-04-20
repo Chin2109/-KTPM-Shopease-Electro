@@ -1,4 +1,4 @@
-import BaseResponse from 'models/BaseResponse';
+import BaseResponse from "models/BaseResponse";
 
 export interface CustomerGroupResponse extends BaseResponse {
   code: string;
@@ -6,6 +6,8 @@ export interface CustomerGroupResponse extends BaseResponse {
   description: string;
   color: string;
   status: number;
+  minRewardPoint?: number; // Tương ứng với Integer
+  discountPercent?: number; // Tương ứng với BigDecimal
 }
 
 export interface CustomerGroupRequest {
@@ -14,4 +16,6 @@ export interface CustomerGroupRequest {
   description: string;
   color: string;
   status: number;
+  minRewardPoint?: number; // Tương ứng với Integer
+  discountPercent?: number; // Tương ứng với BigDecimal
 }
