@@ -3,6 +3,7 @@ package com.electro.dto.authentication;
 import com.electro.dto.address.AddressResponse;
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.Set;
 
@@ -20,4 +21,7 @@ public class UserResponse {
     private String avatar;
     private Integer status;
     private Set<RoleResponse> roles;
+    private String groupName;
+    private String description;
+    private BigDecimal discountPercent;
 }

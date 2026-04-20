@@ -9,4 +9,5 @@ public class CustomerRequest {
     private Long customerGroupId;
     private Long customerStatusId;
     private Long customerResourceId;
+
 }

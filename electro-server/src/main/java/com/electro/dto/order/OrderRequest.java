@@ -4,6 +4,7 @@ import com.electro.entity.cashbook.PaymentMethodType;
 import lombok.Data;
 import org.springframework.lang.Nullable;
 
+import javax.persistence.Column;
 import java.math.BigDecimal;
 import java.util.Set;
 
@@ -27,6 +28,8 @@ public class OrderRequest {
     private BigDecimal totalAmount;
     private BigDecimal tax;
     private BigDecimal shippingCost;
+    @Nullable
+    private BigDecimal discountPercent;
     private BigDecimal totalPay;
     private PaymentMethodType paymentMethodType;
     private Integer paymentStatus;

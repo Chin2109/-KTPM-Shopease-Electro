@@ -36,6 +36,7 @@ public abstract class ClientOrderMapper {
     @Mapping(source = "totalPay", target = "orderTotalPay")
     @Mapping(source = "orderVariants", target = "orderItems")
     @Mapping(source = "paymentStatus", target = "orderPaymentStatus")
+    @Mapping(source = "discountPercent", target = "orderDiscountPercent")
     public abstract ClientSimpleOrderResponse entityToResponse(Order order);
 
     @Mapping(source = "id", target = "orderId")
@@ -59,6 +60,7 @@ public abstract class ClientOrderMapper {
     @Mapping(source = "waybill.code", target = "orderWaybill.waybillCode")
     @Mapping(source = "waybill.expectedDeliveryTime", target = "orderWaybill.waybillExpectedDeliveryTime")
     @Mapping(source = "waybill.waybillLogs", target = "orderWaybill.waybillLogs")
+    @Mapping(source = "discountPercent", target = "orderDiscountPercent")
     public abstract ClientOrderDetailResponse entityToDetailResponse(Order order);
 
     @Mapping(source = "variant.id", target = "orderItemVariant.variantId")
