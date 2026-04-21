@@ -1,5 +1,6 @@
 package com.electro.dto.product;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.Data;
 import org.springframework.lang.Nullable;
@@ -17,6 +18,8 @@ public class VariantResponse {
     private Double price;
     @Nullable
     private JsonNode properties;
+    @JsonInclude(JsonInclude.Include.ALWAYS)
+    private JsonNode specifications;
     private Integer status;
 
     @Data
