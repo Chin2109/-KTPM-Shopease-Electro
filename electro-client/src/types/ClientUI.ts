@@ -89,16 +89,18 @@ export interface ClientProductResponse {
   guaranteeDescription?: string
 }
 
+
 interface ClientProductResponse_ClientBrandResponse {
   brandId: number;
   brandName: string;
 }
 
-interface ClientProductResponse_ClientVariantResponse {
+export interface ClientProductResponse_ClientVariantResponse {
   variantId: number;
   variantPrice: number;
   variantProperties: CollectionWrapper<VariantPropertyItem> | null;
   variantInventory: number;
+  specifications: CollectionWrapper<SpecificationItem> | null;
 }
 
 // WISH
