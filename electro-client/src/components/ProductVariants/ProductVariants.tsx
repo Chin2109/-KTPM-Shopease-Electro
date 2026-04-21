@@ -1,7 +1,7 @@
 import { Table } from '@mantine/core';
 import React, { useEffect } from 'react';
 import { VariantRequest } from 'models/Variant';
-import { CollectionWrapper } from 'types';
+import { CollectionWrapper, SelectOption } from 'types';
 import { ProductPropertyItem } from 'models/Product';
 import MiscUtils from 'utils/MiscUtils';
 import { ProductVariantRow } from 'components';
@@ -10,9 +10,15 @@ interface ProductVariantsProps {
   variants: VariantRequest[];
   setVariants: (variants: VariantRequest[]) => void;
   productProperties: CollectionWrapper<ProductPropertyItem> | null;
-  setProductProperties: (productProperties: CollectionWrapper<ProductPropertyItem> | null) => void;
+  setProductProperties: (
+    productProperties: CollectionWrapper<ProductPropertyItem> | null,
+  ) => void;
   selectedVariantIndexes: number[];
   setSelectedVariantIndexes: React.Dispatch<React.SetStateAction<number[]>>;
+  specificationSelectList: SelectOption[];
+  setSpecificationSelectList: React.Dispatch<
+    React.SetStateAction<SelectOption[]>
+  >;
 }
 
 function ProductVariants({
@@ -22,29 +28,49 @@ function ProductVariants({
   setProductProperties,
   selectedVariantIndexes,
   setSelectedVariantIndexes,
+  specificationSelectList,
+  setSpecificationSelectList,
 }: ProductVariantsProps) {
-
   useEffect(() => {
-    const defaultVariant: VariantRequest = { sku: '', cost: 0, price: 0, properties: null, status: 1 };
+    const defaultVariant: VariantRequest = {
+      sku: "",
+      cost: 0,
+      price: 0,
+      properties: null,
+      specifications: null,
+      status: 1,
+    };
     const currentVariants: VariantRequest[] = [];
     const currentSelectedVariantIndexes: number[] = [];
 
-    if (productProperties && productProperties.content.some(item => item.value.length !== 0)) {
+    if (
+      productProperties &&
+      productProperties.content.some((item) => item.value.length !== 0)
+    ) {
       const productPropertiesValues = productProperties.content
-        .filter(item => item.value.length !== 0)
-        .map(item => item.value);
-      const propertyValueCombinations = MiscUtils.recursiveFlatMap(productPropertiesValues);
+        .filter((item) => item.value.length !== 0)
+        .map((item) => item.value);
+      const propertyValueCombinations = MiscUtils.recursiveFlatMap(
+        productPropertiesValues,
+      );
 
       for (const propertyValueCombination of propertyValueCombinations) {
         const variant = { ...defaultVariant };
-        variant.properties = new CollectionWrapper(productProperties.content
-          .filter(item => item.value.length !== 0)
-          .map(item => ({ ...item, value: '' })));
-        variant.properties.content.forEach((item, index) => (item.value = propertyValueCombination[index]));
+        variant.specifications = null;
+        variant.properties = new CollectionWrapper(
+          productProperties.content
+            .filter((item) => item.value.length !== 0)
+            .map((item) => ({ ...item, value: "" })),
+        );
+        variant.properties.content.forEach(
+          (item, index) => (item.value = propertyValueCombination[index]),
+        );
         currentVariants.push(variant);
       }
 
-      currentSelectedVariantIndexes.push(...Array.from(Array(propertyValueCombinations.length).keys()));
+      currentSelectedVariantIndexes.push(
+        ...Array.from(Array(propertyValueCombinations.length).keys()),
+      );
     } else {
       currentVariants.push(defaultVariant);
       currentSelectedVariantIndexes.push(0);
@@ -55,11 +81,7 @@ function ProductVariants({
   }, [productProperties]);
 
   return (
-    <Table
-      horizontalSpacing="xs"
-      verticalSpacing="sm"
-      striped
-    >
+    <Table horizontalSpacing="xs" verticalSpacing="sm" striped>
       <thead>
         <tr>
           <th>#</th>
@@ -79,6 +101,8 @@ function ProductVariants({
             setVariants={setVariants}
             selectedVariantIndexes={selectedVariantIndexes}
             setSelectedVariantIndexes={setSelectedVariantIndexes}
+            specificationSelectList={specificationSelectList}
+            setSpecificationSelectList={setSpecificationSelectList}
           />
         ))}
       </tbody>

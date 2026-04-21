@@ -160,6 +160,8 @@ function ProductUpdate() {
                   setProductProperties={(productProperties) => form.setFieldValue('properties', productProperties)}
                   selectedVariantIndexes={selectedVariantIndexes}
                   setSelectedVariantIndexes={setSelectedVariantIndexes}
+                  specificationSelectList={specificationSelectList}
+                  setSpecificationSelectList={setSpecificationSelectList}
                 />
               </Grid.Col>
               <Grid.Col>

@@ -1,18 +1,19 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Container, Skeleton, Stack, useMantineTheme } from '@mantine/core';
-import { useQuery } from 'react-query';
-import FetchUtils, { ErrorMessage } from 'utils/FetchUtils';
+import { ClientError } from 'components';
 import ResourceURL from 'constants/ResourceURL';
-import NotifyUtils from 'utils/NotifyUtils';
+import useTitle from 'hooks/use-title';
+import ClientProductDescription from 'pages/client-product/ClientProductDescription';
+import ClientProductIntro from 'pages/client-product/ClientProductIntro';
+import ClientProductRelatedProducts from 'pages/client-product/ClientProductRelatedProducts';
+import ClientProductReviews from 'pages/client-product/ClientProductReviews';
+import ClientProductSpecification from 'pages/client-product/ClientProductSpecification';
+import { useEffect, useState } from 'react';
+import { useQuery } from 'react-query';
 import { useParams } from 'react-router-dom';
 import { ClientProductResponse, ClientProductResponse_ClientVariantResponse } from 'types';
-import useTitle from 'hooks/use-title';
-import { ClientError } from 'components';
-import ClientProductIntro from 'pages/client-product/ClientProductIntro';
-import ClientProductSpecification from 'pages/client-product/ClientProductSpecification';
-import ClientProductDescription from 'pages/client-product/ClientProductDescription';
-import ClientProductReviews from 'pages/client-product/ClientProductReviews';
-import ClientProductRelatedProducts from 'pages/client-product/ClientProductRelatedProducts';
+import FetchUtils, { ErrorMessage } from 'utils/FetchUtils';
+import NotifyUtils from 'utils/NotifyUtils';
 import ClientProductGuarantee from './ClientProductGuarantee';
 
 function ClientProduct() {
@@ -20,13 +21,17 @@ function ClientProduct() {
 
   const { slug } = useParams();
 
+
+
   const { productResponse, isLoadingProductResponse, isErrorProductResponse } =
     useGetProductApi(slug as string);
   const product = productResponse as ClientProductResponse;
 
   // 1. Thêm State để lưu variant đang chọn
   const [selectedVariant, setSelectedVariant] =
-    useState<ClientProductResponse_ClientVariantResponse | null>(null);
+    useState<ClientProductResponse_ClientVariantResponse>(
+      {} as ClientProductResponse_ClientVariantResponse,
+    );
 
   // 2. Tự động chọn variant đầu tiên khi dữ liệu load xong
   useEffect(() => {
@@ -34,6 +39,7 @@ function ClientProduct() {
       setSelectedVariant(product.productVariants[0]);
     }
   }, [product]);
+  
   useTitle(product?.productName);
 
   if (isLoadingProductResponse) {
@@ -48,7 +54,11 @@ function ClientProduct() {
     <main>
       <Container size="xl">
         <Stack spacing={theme.spacing.xl * 2}>
-          <ClientProductIntro product={product} />
+          <ClientProductIntro
+            product={product}
+            selectedVariant={selectedVariant}
+            setSelectedVariant={setSelectedVariant}
+          />
 
           {(product.productSpecifications ||
             selectedVariant?.specifications) && (

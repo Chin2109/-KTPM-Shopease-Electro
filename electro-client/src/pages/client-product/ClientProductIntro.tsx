@@ -29,6 +29,7 @@ import {
   ClientCartRequest,
   ClientPreorderRequest,
   ClientProductResponse,
+  ClientProductResponse_ClientVariantResponse,
   ClientWishRequest,
   UpdateQuantityType,
 } from "types";
@@ -37,12 +38,14 @@ import NotifyUtils from "utils/NotifyUtils";
 
 interface ClientProductIntroProps {
   product: ClientProductResponse;
+  selectedVariant: ClientProductResponse_ClientVariantResponse;
+  setSelectedVariant: (variant: ClientProductResponse_ClientVariantResponse) => void;
 }
 
-function ClientProductIntro({ product }: ClientProductIntroProps) {
+function ClientProductIntro({ product, selectedVariant, setSelectedVariant }: ClientProductIntroProps) {
   const theme = useMantineTheme();
 
-  const [selectedVariantIndex, setSelectedVariantIndex] = useState(0);
+  // const [selectedVariantIndex, setSelectedVariantIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
 
   const quantityInputHandlers = useRef<NumberInputHandlers>();
@@ -53,8 +56,8 @@ function ClientProductIntro({ product }: ClientProductIntroProps) {
   const createPreorderApi = useCreatePreorderApi();
   const saveCartApi = useSaveCartApi();
 
-  const handleSelectVariantButton = (variantIndex: number) => {
-    setSelectedVariantIndex(variantIndex);
+  const handleSelectVariantButton = (variant: ClientProductResponse_ClientVariantResponse) => {
+    setSelectedVariant(variant);
     setQuantity(1);
   };
 
@@ -92,7 +95,7 @@ function ClientProductIntro({ product }: ClientProductIntroProps) {
         userId: user.id,
         cartItems: [
           {
-            variantId: product.productVariants[selectedVariantIndex].variantId,
+            variantId: selectedVariant.variantId,
             quantity: quantity,
           },
         ],
@@ -224,8 +227,7 @@ function ClientProductIntro({ product }: ClientProductIntroProps) {
                   <Text sx={{ fontSize: 24 }} weight={700} color="pink">
                     {MiscUtils.formatPrice(
                       MiscUtils.calculateDiscountedPrice(
-                        product.productVariants[selectedVariantIndex]
-                          ?.variantPrice,
+                        selectedVariant?.variantPrice,
                         product.productPromotion
                           ? product.productPromotion.promotionPercent
                           : 0,
@@ -236,11 +238,7 @@ function ClientProductIntro({ product }: ClientProductIntroProps) {
                   {product.productPromotion && (
                     <>
                       <Text sx={{ textDecoration: "line-through" }}>
-                        {MiscUtils.formatPrice(
-                          product.productVariants[selectedVariantIndex]
-                            ?.variantPrice,
-                        )}{" "}
-                        ₫
+                        {MiscUtils.formatPrice(selectedVariant?.variantPrice)} ₫
                       </Text>
                       <Badge color="pink" size="lg" variant="filled">
                         -{product.productPromotion.promotionPercent}%
@@ -265,15 +263,17 @@ function ClientProductIntro({ product }: ClientProductIntroProps) {
                             padding: "7.5px 15px",
                             border: `2px solid ${
                               theme.colorScheme === "dark"
-                                ? index === selectedVariantIndex
+                                ? selectedVariant.variantId ===
+                                  variant.variantId
                                   ? theme.colors.blue[9]
                                   : theme.colors.dark[3]
-                                : index === selectedVariantIndex
+                                : selectedVariant.variantId ===
+                                    variant.variantId
                                   ? theme.colors.blue[4]
                                   : theme.colors.gray[2]
                             }`,
                             backgroundColor:
-                              index === selectedVariantIndex
+                              selectedVariant.variantId === variant.variantId
                                 ? theme.colorScheme === "dark"
                                   ? theme.fn.rgba(theme.colors.blue[9], 0.25)
                                   : theme.colors.blue[0]
@@ -281,9 +281,9 @@ function ClientProductIntro({ product }: ClientProductIntroProps) {
                             opacity:
                               variant.variantInventory === 0 ? 0.5 : "unset",
                           }}
-                          onClick={() => handleSelectVariantButton(index)}
+                          onClick={() => handleSelectVariantButton(variant)}
                           disabled={
-                            selectedVariantIndex === index ||
+                            // selectedVariant.variantId === variant.variantId ||
                             variant.variantInventory === 0
                           }
                         >
@@ -355,7 +355,7 @@ function ClientProductIntro({ product }: ClientProductIntroProps) {
                       onChange={(value) => setQuantity(value || 1)}
                       handlersRef={quantityInputHandlers}
                       max={
-                        product.productVariants[selectedVariantIndex]
+                        selectedVariant
                           .variantInventory
                       }
                       min={1}
