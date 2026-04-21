@@ -47,6 +47,8 @@ public class ClientProductResponse {
         private Double variantPrice;
         @Nullable
         private JsonNode variantProperties;
+        @Nullable
+        private JsonNode variantSpecifications;
         private Integer variantInventory;
     }
 
