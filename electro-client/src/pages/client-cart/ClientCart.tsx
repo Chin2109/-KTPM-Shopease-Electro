@@ -296,7 +296,7 @@ function ClientCart() {
               </Stack>
             </Card>
 
-            <Card radius="md" shadow="sm" px="lg" pt="md" pb="lg">
+            {/* <Card radius="md" shadow="sm" px="lg" pt="md" pb="lg">
               <Stack spacing="xs">
                 <Text weight={500} color="dimmed">
                   Hình thức giao hàng
@@ -313,7 +313,7 @@ function ClientCart() {
                   />
                 </RadioGroup>
               </Stack>
-            </Card>
+            </Card> */}
 
             <Card radius="md" shadow="sm" px="lg" pt="md" pb="lg">
               <Stack spacing="xs">

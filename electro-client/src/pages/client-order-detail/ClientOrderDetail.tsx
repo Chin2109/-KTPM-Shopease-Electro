@@ -243,9 +243,12 @@ function ClientOrderDetail() {
             </Group>
           </Group>
           <Group position="apart">
+            {order.orderStatus === 4 && order.orderPaymentStatus === 2 && (
             <Button variant="outline" color="dark" onClick={handlePrint}>
               In hóa đơn
             </Button>
+            )}
+
           </Group>
         </Card>
 
@@ -276,7 +279,7 @@ function ClientOrderDetail() {
             </Card>
           </Grid.Col>
 
-          <Grid.Col md={4}>
+          {/* <Grid.Col md={4}>
             <Card p="md" radius="md" sx={cardStyles}>
               <Stack spacing="xs">
                 <Text weight={500} color="dimmed">
@@ -288,7 +291,7 @@ function ClientOrderDetail() {
                 />
               </Stack>
             </Card>
-          </Grid.Col>
+          </Grid.Col> */}
 
           <Grid.Col md={4}>
             <Card p="md" radius="md" sx={cardStyles}>
@@ -311,7 +314,7 @@ function ClientOrderDetail() {
           </Grid.Col>
         </Grid>
 
-        <Card p="md" radius="md" sx={cardStyles}>
+        {/* <Card p="md" radius="md" sx={cardStyles}>
           <Stack spacing="xs">
             <Text weight={500} color="dimmed">
               Theo dõi vận đơn
@@ -390,7 +393,7 @@ function ClientOrderDetail() {
               <Text size="sm">Hiện đơn hàng chưa có vận đơn</Text>
             )}
           </Stack>
-        </Card>
+        </Card> */}
 
         <Card p={0} radius="md" sx={cardStyles}>
           <ScrollArea>

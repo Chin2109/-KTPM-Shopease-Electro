@@ -1270,3 +1270,50 @@ CREATE TABLE reward_log
 
 ALTER TABLE reward_log
     ADD CONSTRAINT FK_REWARD_LOG_ON_USER FOREIGN KEY (user_id) REFERENCES user (id);
+
+-- SERIAL TABLE
+CREATE TABLE serial
+(
+    id          BIGINT AUTO_INCREMENT NOT NULL,
+    created_at  datetime              NOT NULL,
+    updated_at  datetime              NOT NULL,
+    created_by  BIGINT                NULL,
+    updated_by  BIGINT                NULL,
+
+    variant_id  BIGINT                NOT NULL,
+    serial_code VARCHAR(255)          NOT NULL,
+    status      TINYINT               NOT NULL,
+    order_id    BIGINT                NULL,
+
+    CONSTRAINT pk_serial PRIMARY KEY (id),
+    CONSTRAINT uc_serial_code UNIQUE (serial_code)
+);
+
+ALTER TABLE serial
+    ADD CONSTRAINT FK_SERIAL_ON_VARIANT FOREIGN KEY (variant_id) REFERENCES variant (id);
+
+ALTER TABLE serial
+    ADD CONSTRAINT FK_SERIAL_ON_ORDER FOREIGN KEY (order_id) REFERENCES `order` (id);
+
+-- WARRANTY TICKET TABLE
+CREATE TABLE warranty_ticket
+(
+    id          BIGINT AUTO_INCREMENT NOT NULL,
+    created_at  datetime              NOT NULL,
+    updated_at  datetime              NOT NULL,
+    created_by  BIGINT                NULL,
+    updated_by  BIGINT                NULL,
+
+    serial_id   BIGINT                NOT NULL,
+    customer_id BIGINT                NOT NULL,
+    status      TINYINT               NOT NULL,
+    note        VARCHAR(255)          NULL,
+
+    CONSTRAINT pk_warranty_ticket PRIMARY KEY (id)
+);
+
+ALTER TABLE warranty_ticket
+    ADD CONSTRAINT FK_WARRANTY_ON_SERIAL FOREIGN KEY (serial_id) REFERENCES serial (id);
+
+ALTER TABLE warranty_ticket
+    ADD CONSTRAINT FK_WARRANTY_ON_CUSTOMER FOREIGN KEY (customer_id) REFERENCES customer (id);

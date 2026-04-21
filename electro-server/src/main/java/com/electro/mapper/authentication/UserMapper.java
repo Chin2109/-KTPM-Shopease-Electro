@@ -39,4 +39,9 @@ public interface UserMapper extends GenericMapper<User, UserRequest, UserRespons
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     User partialUpdate(@MappingTarget User entity, ClientEmailSettingUserRequest request);
 
+    @Override
+    @Mapping(target = "groupName", source = "customer.customerGroup.name")
+    @Mapping(target = "description", source = "customer.customerGroup.description")
+    @Mapping(target = "discountPercent", source = "customer.customerGroup.discountPercent")
+    UserResponse entityToResponse(User entity);
 }

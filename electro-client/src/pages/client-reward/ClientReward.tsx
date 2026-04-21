@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Alert,
   Badge,
@@ -38,6 +38,8 @@ import CustomerGroupConfigs from "pages/customer-group/CustomerGroupConfigs";
 import { CustomerGroupResponse } from "models/CustomerGroup";
 import useGetAllApi from "hooks/use-get-all-api";
 import PageConfigs from "pages/PageConfigs";
+import { UserResponse } from "models/User";
+import { group } from "console";
 
 type RewardLogInfo = {
   icon: Icon;
@@ -58,7 +60,7 @@ const rewardLogInfoMap: Record<RewardType, RewardLogInfo> = {
 function ClientReward() {
   useTitle();
 
-  const { user } = useAuthStore();
+  const { user, updateUser } = useAuthStore();
 
   const theme = useMantineTheme();
 
@@ -72,8 +74,28 @@ function ClientReward() {
       CustomerGroupConfigs.resourceUrl,
       CustomerGroupConfigs.resourceKey,
     );
+
+  useEffect(() => {
+  if (!rewardResponse || !user || !listResponse?.content) return;
+
+  const score = rewardResponse.rewardTotalScore;
+
+  const matchedGroup = [...listResponse.content]
+  .sort((a, b) => (b.minRewardPoint ?? 0) - (a.minRewardPoint ?? 0))
+    .find(group => score >= (group.minRewardPoint ?? 0));
+
+  if (!matchedGroup) return;
+  if (user.groupName !== matchedGroup.name) {
+    updateUser({
+      ...user,
+      groupName: matchedGroup.name,
+    });
+  }
+
+}, [rewardResponse?.rewardTotalScore, listResponse?.content]);
+
   
-  console.log("listResponse", listResponse);
+
 
   let rewardContentFragment;
 
@@ -176,7 +198,7 @@ function ClientReward() {
                         <Badge
                           variant="filled"
                           color="white"
-                          sx={{ color: theme.colors[alertColor][6] }}
+              
                           size="sm"
                         >
                           Hiện tại

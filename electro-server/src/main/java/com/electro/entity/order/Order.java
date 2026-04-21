@@ -92,6 +92,9 @@ public class Order extends BaseEntity {
     @Column(name = "shipping_cost", nullable = false, columnDefinition = "DECIMAL(15,5)")
     private BigDecimal shippingCost;
 
+    @Column(name = "discount_percent")
+    private BigDecimal discountPercent;
+
     @Column(name = "total_pay", nullable = false, columnDefinition = "DECIMAL(15,5)")
     private BigDecimal totalPay;
 
@@ -116,5 +119,4 @@ public class Order extends BaseEntity {
     @Column(name = "paypal_order_status")
     private String paypalOrderStatus;
 
-    // vouchers: List<Voucher>
 }

@@ -10,12 +10,15 @@ import com.electro.entity.client.Preorder;
 import com.electro.entity.general.Notification;
 import com.electro.entity.general.NotificationType;
 import com.electro.entity.inventory.Docket;
+import com.electro.entity.product.Serial;
+import com.electro.entity.product.Variant;
 import com.electro.exception.ResourceNotFoundException;
 import com.electro.mapper.general.NotificationMapper;
 import com.electro.mapper.inventory.DocketMapper;
 import com.electro.repository.client.PreorderRepository;
 import com.electro.repository.general.NotificationRepository;
 import com.electro.repository.inventory.DocketRepository;
+import com.electro.repository.product.SerialRepository;
 import com.electro.service.general.NotificationService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +26,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -42,6 +46,8 @@ public class DocketServiceImpl implements DocketService {
 
     private NotificationMapper notificationMapper;
 
+    private SerialRepository serialRepository;
+
     @Override
     public ListResponse<DocketResponse> findAll(int page, int size, String sort, String filter, String search, boolean all) {
         return defaultFindAll(page, size, sort, filter, search, all, SearchFields.DOCKET, docketRepository, docketMapper);
@@ -54,8 +60,17 @@ public class DocketServiceImpl implements DocketService {
 
     @Override
     public DocketResponse save(DocketRequest request) {
-        Docket docket = docketRepository.save(docketMapper.requestToEntity(request));
+        Docket docket = docketMapper.requestToEntity(request);
+
+        // ✅ FIX ở đây
+        if (docket.getCode() == null) {
+            docket.setCode(generateDocketCode());
+        }
+
+        docket = docketRepository.save(docket);
+
         afterCreateOrUpdateCallback(docket);
+
         return docketMapper.entityToResponse(docket);
     }
 
@@ -78,6 +93,23 @@ public class DocketServiceImpl implements DocketService {
                     .collect(Collectors.toList());
 
             List<Preorder> preorders = preorderRepository.findByProduct_IdInAndStatus(productIds, 1);
+
+            log.warn("RUN CALLBACK");
+            docket.getDocketVariants().forEach(dv -> {
+                log.warn("VARIANT ID: {}, QTY: {}", dv.getVariant().getId(), dv.getQuantity());
+                Variant variant = dv.getVariant();
+                int quantity = dv.getQuantity();
+
+                for (int i = 0; i < quantity; i++) {
+                    Serial serial = new Serial();
+                    serial.setVariant(variant);
+                    serial.setSerialCode(generateSerialCode());
+                    serial.setStatus(0); // in_stock
+
+                    serialRepository.save(serial);
+                    log.warn("CREATED SERIAL: {}", serial.getSerialCode());
+                }
+            });
 
             List<Notification> notifications = preorders.stream()
                     .map(preorder -> new Notification()
@@ -106,6 +138,14 @@ public class DocketServiceImpl implements DocketService {
 
             log.info("Push notifications for users: " + usernames);
         }
+    }
+
+    private String generateSerialCode() {
+        return "SR-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+    }
+
+    private String generateDocketCode() {
+        return "DK-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
     }
 
     @Override

@@ -116,6 +116,8 @@ public class ClientProductMapper {
                 .findFirst()
                 .map(promotionMapper::entityToClientResponse)
                 .orElse(null));
+        clientProductResponse.setGuaranteeName(product.getGuarantee().getName());
+        clientProductResponse.setGuaranteeDescription(product.getGuarantee().getDescription());
 
         return clientProductResponse;
     }

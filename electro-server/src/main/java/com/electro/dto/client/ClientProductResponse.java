@@ -49,4 +49,7 @@ public class ClientProductResponse {
         private JsonNode variantProperties;
         private Integer variantInventory;
     }
+
+    private String guaranteeName;
+    private String guaranteeDescription;
 }

@@ -68,6 +68,7 @@ export interface ClientPasswordSettingUserRequest {
 
 // PRODUCT
 
+
 export interface ClientProductResponse {
   productId: number;
   productName: string;
@@ -84,6 +85,8 @@ export interface ClientProductResponse {
   productCountReviews: number;
   productRelatedProducts: ClientListedProductResponse[];
   productPromotion: ClientPromotionResponse | null;
+  guaranteeName?: string,
+  guaranteeDescription?: string
 }
 
 interface ClientProductResponse_ClientBrandResponse {

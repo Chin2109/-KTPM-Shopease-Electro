@@ -23,6 +23,7 @@ public class ClientOrderDetailResponse {
     private BigDecimal orderTotalAmount;
     private BigDecimal orderTax;
     private BigDecimal orderShippingCost;
+    private BigDecimal orderDiscountPercent;
     private BigDecimal orderTotalPay;
     private PaymentMethodType orderPaymentMethodType;
     private Integer orderPaymentStatus;

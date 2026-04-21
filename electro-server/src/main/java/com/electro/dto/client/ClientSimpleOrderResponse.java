@@ -12,6 +12,7 @@ public class ClientSimpleOrderResponse {
     private Instant orderCreatedAt;
     private String orderCode;
     private Integer orderStatus;
+    private BigDecimal orderDiscountPercent;
     private BigDecimal orderTotalPay;
     private Set<ClientOrderVariantResponse> orderItems;
     private Integer orderPaymentStatus;

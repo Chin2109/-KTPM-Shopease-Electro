@@ -24,6 +24,7 @@ public interface CustomerMapper extends GenericMapper<Customer, CustomerRequest,
     @Mapping(source = "customerGroupId", target = "customerGroup")
     @Mapping(source = "customerResourceId", target = "customerResource")
     @Mapping(source = "customerStatusId", target = "customerStatus")
+    @Mapping(target = "user", ignore = true)
     Customer partialUpdate(@MappingTarget Customer entity, CustomerRequest request);
 
 }

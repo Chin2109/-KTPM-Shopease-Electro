@@ -13,6 +13,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,4 +43,11 @@ public class CustomerGroup extends BaseEntity {
     @OneToMany(mappedBy = "customerGroup", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<Customer> employees = new ArrayList<>();
+
+    @Column(name = "min_reward_point")
+    private Integer minRewardPoint;
+
+    @Column(name = "discount_percent")
+    private BigDecimal discountPercent;
+
 }
