@@ -20,6 +20,7 @@ export interface ClientCategoryResponse {
 export interface ClientListedProductResponse {
   productId: number;
   productName: string;
+  productStatus: number;
   productSlug: string;
   productThumbnail: string | null;
   productPriceRange: number[];
@@ -89,16 +90,18 @@ export interface ClientProductResponse {
   guaranteeDescription?: string
 }
 
+
 interface ClientProductResponse_ClientBrandResponse {
   brandId: number;
   brandName: string;
 }
 
-interface ClientProductResponse_ClientVariantResponse {
+export interface ClientProductResponse_ClientVariantResponse {
   variantId: number;
   variantPrice: number;
   variantProperties: CollectionWrapper<VariantPropertyItem> | null;
   variantInventory: number;
+  variantSpecifications: CollectionWrapper<SpecificationItem> | null;
 }
 
 // WISH

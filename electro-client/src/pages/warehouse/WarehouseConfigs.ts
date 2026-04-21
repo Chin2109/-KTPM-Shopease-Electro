@@ -72,6 +72,10 @@ class WarehouseConfigs extends Configs {
       label: 'Tên quận huyện',
       type: EntityPropertyType.STRING,
     },
+    'address.ward.name': {
+      label: 'Tên phường xã',
+      type: EntityPropertyType.STRING,
+    },
     status: {
       label: 'Trạng thái nhà kho',
       type: EntityPropertyType.NUMBER,
@@ -89,6 +93,12 @@ class WarehouseConfigs extends Configs {
       isNotAddToSortCriteria: true,
       isNotAddToFilterCriteria: true,
     },
+      'address.wardId': {
+      label: 'Phường xã',
+      type: EntityPropertyType.NUMBER,
+      isNotAddToSortCriteria: true,
+      isNotAddToFilterCriteria: true,
+    },
   };
 
   static properties = WarehouseConfigs._rawProperties as
@@ -100,6 +110,7 @@ class WarehouseConfigs extends Configs {
     'address.line': '',
     'address.provinceId': null as string | null,
     'address.districtId': null as string | null,
+    'address.wardId': null as string | null,
     status: '1',
   };
 
@@ -109,6 +120,7 @@ class WarehouseConfigs extends Configs {
     'address.line': z.string(),
     'address.provinceId': z.string().nullable(),
     'address.districtId': z.string().nullable(),
+    'address.wardId': z.string().nullable(),
     status: z.string(),
   });
 }

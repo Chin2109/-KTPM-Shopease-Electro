@@ -13,6 +13,7 @@ function WarehouseUpdate() {
     handleFormSubmit,
     provinceSelectList,
     districtSelectList,
+    wardSelectList,
     statusSelectList,
   } = useWarehouseUpdateViewModel(Number(id));
 
@@ -77,6 +78,16 @@ function WarehouseUpdate() {
                   searchable
                   data={districtSelectList}
                   {...form.getInputProps('address.districtId')}
+                />
+              </Grid.Col>
+              <Grid.Col xs={6}>
+                <Select
+                  label={WarehouseConfigs.properties['address.wardId'].label}
+                  placeholder="--"
+                  clearable
+                  searchable
+                  data={wardSelectList}
+                  {...form.getInputProps('address.wardId')}
                 />
               </Grid.Col>
               <Grid.Col xs={6}>

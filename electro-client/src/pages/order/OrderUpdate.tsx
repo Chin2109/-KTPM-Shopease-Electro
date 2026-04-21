@@ -62,10 +62,14 @@ function OrderUpdate() {
       const selectList: SelectOption[] = userListResponse.content.map((item) => ({
         value: String(item.id),
         label: item.fullname,
+        discountPercent: item.discountPercent,
       }));
       setUserSelectList(selectList);
     }
   );
+    const selectedUser = userSelectList.find(
+  (u) => u.value === form.values.userId
+);
 
   if (!order) {
     return null;
@@ -119,13 +123,32 @@ function OrderUpdate() {
                   </Text>
                 </Grid.Col>
                 <Grid.Col span={6}>
-                  <Text size="sm" weight={500}>Thuế ({form.values.tax * 100 + '%'}):</Text>
+                  <Text size="sm" weight={500}>Thuế (10%):</Text>
                 </Grid.Col>
                 <Grid.Col span={6}>
                   <Text size="md" color="blue" weight={500} sx={{ textAlign: 'right' }}>
-                    {MiscUtils.formatPrice(Number((form.values.totalAmount * form.values.tax).toFixed(0))) + ' ₫'}
+                    {MiscUtils.formatPrice(Number((form.values.totalAmount * 0.1).toFixed(0))) + ' ₫'}
                   </Text>
                 </Grid.Col>
+              {selectedUser?.discountPercent && (
+                <>
+                  <Grid.Col span={6}>
+                    <Text size="sm" weight={500}>
+                      Khuyến mãi ({selectedUser.discountPercent}%):
+                    </Text>
+                  </Grid.Col>
+
+                  <Grid.Col span={6}>
+                    <Text size="md" color="blue" weight={500} sx={{ textAlign: 'right' }}>
+                      {MiscUtils.formatPrice(
+                        Math.round(
+                          (form.values.totalAmount * (selectedUser?.discountPercent || 0)) / 100
+                        )
+                      ) + " ₫"}
+                    </Text>
+                  </Grid.Col>
+                </>
+              )}
                 <Grid.Col span={6}>
                   <Text size="sm" weight={500}>Phí vận chuyển:</Text>
                 </Grid.Col>

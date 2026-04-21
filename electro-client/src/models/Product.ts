@@ -41,6 +41,7 @@ export interface ProductResponse_VariantResponse extends BaseResponse {
   cost: number;
   price: number;
   properties: CollectionWrapper<VariantPropertyItem> | null;
+  specifications: CollectionWrapper<SpecificationItem> | null;
   status: number;
 }
 

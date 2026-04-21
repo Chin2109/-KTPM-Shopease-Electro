@@ -44,9 +44,9 @@ function ProductSpecificationRow({
       if (option.disabled === true && !currentSpecificationsIds.includes(JSON.parse(option.value).id)) {
         return { value: option.value, label: option.label };
       }
-      if (option.value === specificationInfos) {
-        return { ...option, disabled: true };
-      }
+      // if (option.value === specificationInfos) {
+      //   return { ...option, disabled: true };
+      // }
       return option;
     }));
   };

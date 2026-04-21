@@ -12,6 +12,8 @@ import ProvinceConfigs from 'pages/province/ProvinceConfigs';
 import { DistrictResponse } from 'models/District';
 import DistrictConfigs from 'pages/district/DistrictConfigs';
 import { AddressRequest } from 'models/Address';
+import WardConfigs from 'pages/ward/WardConfigs';
+import { WardResponse } from 'models/Ward';
 
 function useWarehouseUpdateViewModel(id: number) {
   const form = useForm({
@@ -23,6 +25,7 @@ function useWarehouseUpdateViewModel(id: number) {
   const [prevFormValues, setPrevFormValues] = useState<typeof form.values>();
   const [provinceSelectList, setProvinceSelectList] = useState<SelectOption[]>([]);
   const [districtSelectList, setDistrictSelectList] = useState<SelectOption[]>([]);
+  const [wardSelectList, setWardSelectList] = useState<SelectOption[]>([]);
 
   const updateApi = useUpdateApi<WarehouseRequest, WarehouseResponse>(WarehouseConfigs.resourceUrl, WarehouseConfigs.resourceKey, id);
   useGetByIdApi<WarehouseResponse>(WarehouseConfigs.resourceUrl, WarehouseConfigs.resourceKey, id,
@@ -34,6 +37,7 @@ function useWarehouseUpdateViewModel(id: number) {
         'address.line': warehouseResponse.address?.line || '',
         'address.provinceId': warehouseResponse.address?.province ? String(warehouseResponse.address.province.id) : null,
         'address.districtId': warehouseResponse.address?.district ? String(warehouseResponse.address.district.id) : null,
+        'address.wardId': warehouseResponse.address?.ward ? String(warehouseResponse.address.ward.id) : null,
         status: String(warehouseResponse.status),
       };
       form.setValues(formValues);
@@ -60,6 +64,17 @@ function useWarehouseUpdateViewModel(id: number) {
       setDistrictSelectList(selectList);
     }
   );
+      useGetAllApi<WardResponse>(WardConfigs.resourceUrl, WardConfigs.resourceKey,
+    { all: 1, filter: `district.id==${form.values['address.districtId'] || 0}` },
+    (wardListResponse) => {
+      const selectList: SelectOption[] = wardListResponse.content.map((item) => ({
+        value: String(item.id),
+        label: item.name,
+      }));
+      setWardSelectList(selectList);
+    },
+    { refetchOnWindowFocus: false }
+  );
 
   const handleFormSubmit = form.onSubmit((formValues) => {
     setPrevFormValues(formValues);
@@ -68,7 +83,7 @@ function useWarehouseUpdateViewModel(id: number) {
         line: formValues['address.line'] || null,
         provinceId: Number(formValues['address.provinceId']) || null,
         districtId: Number(formValues['address.districtId']) || null,
-        wardId: null,
+        wardId: Number(formValues['address.wardId']) || null,
       };
       const requestBody: WarehouseRequest = {
         code: formValues.code,
@@ -97,6 +112,7 @@ function useWarehouseUpdateViewModel(id: number) {
     handleFormSubmit,
     provinceSelectList,
     districtSelectList,
+    wardSelectList,
     statusSelectList,
   };
 }

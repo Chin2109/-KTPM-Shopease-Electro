@@ -16,6 +16,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Join;
@@ -163,7 +164,10 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
         return new PageImpl<>(products.subList(start, end), pageable, products.size());
     }
 
-    Optional<Product> findBySlug(String slug);
+    @Query("SELECT p FROM Product p " +
+            "LEFT JOIN FETCH p.variants v " +
+            "WHERE p.slug = :slug")
+    Optional<Product> findBySlug(@Param("slug") String slug);
 
 
     @Query("SELECT COUNT(p.id) FROM Product p")

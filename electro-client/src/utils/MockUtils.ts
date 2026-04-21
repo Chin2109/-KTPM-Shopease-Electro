@@ -352,6 +352,7 @@ class MockUtils {
   static sampleProduct: ClientListedProductResponse = {
     productId: 1,
     productName: 'Lenovo Legion 5 Pro 2022',
+    productStatus: 1,
     productSlug: 'lenovo-legion-5-pro-2022',
     productThumbnail: 'https://dummyimage.com/400x400/e8e8e8/6e6e6e.png',
     productPriceRange: [10_000_000, 12_000_000],
