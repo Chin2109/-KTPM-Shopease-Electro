@@ -20,6 +20,7 @@ export interface ClientCategoryResponse {
 export interface ClientListedProductResponse {
   productId: number;
   productName: string;
+  productStatus: number;
   productSlug: string;
   productThumbnail: string | null;
   productPriceRange: number[];
@@ -68,6 +69,7 @@ export interface ClientPasswordSettingUserRequest {
 
 // PRODUCT
 
+
 export interface ClientProductResponse {
   productId: number;
   productName: string;
@@ -84,18 +86,22 @@ export interface ClientProductResponse {
   productCountReviews: number;
   productRelatedProducts: ClientListedProductResponse[];
   productPromotion: ClientPromotionResponse | null;
+  guaranteeName?: string,
+  guaranteeDescription?: string
 }
+
 
 interface ClientProductResponse_ClientBrandResponse {
   brandId: number;
   brandName: string;
 }
 
-interface ClientProductResponse_ClientVariantResponse {
+export interface ClientProductResponse_ClientVariantResponse {
   variantId: number;
   variantPrice: number;
   variantProperties: CollectionWrapper<VariantPropertyItem> | null;
   variantInventory: number;
+  variantSpecifications: CollectionWrapper<SpecificationItem> | null;
 }
 
 // WISH
@@ -271,6 +277,7 @@ export interface ClientOrderDetailResponse {
   orderTotalAmount: number;
   orderTax: number;
   orderShippingCost: number;
+  orderDiscountPercent: number;
   orderTotalPay: number;
   orderPaymentMethodType: PaymentMethodType;
   orderPaymentStatus: number;
@@ -313,12 +320,19 @@ export interface ClientRoomExistenceResponse {
 
 export interface ClientSimpleOrderRequest {
   paymentMethodType: PaymentMethodType;
+  discountPercent?: number;
 }
 
 export interface ClientConfirmedOrderResponse {
   orderCode: string;
   orderPaymentMethodType: PaymentMethodType;
   orderPaypalCheckoutLink: string | null;
+  amount: number;
+}
+
+export interface PaymentCheckoutResponse {
+  code: string;
+  paymentUrl: string;
 }
 
 // REWARD

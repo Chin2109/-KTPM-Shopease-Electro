@@ -12,6 +12,7 @@ import java.util.List;
 @Accessors(chain = true)
 public class ClientProductResponse {
     private Long productId;
+    private Integer productStatus;
     private String productName;
     private String productSlug;
     @Nullable
@@ -47,6 +48,11 @@ public class ClientProductResponse {
         private Double variantPrice;
         @Nullable
         private JsonNode variantProperties;
+        @Nullable
+        private JsonNode variantSpecifications;
         private Integer variantInventory;
     }
+
+    private String guaranteeName;
+    private String guaranteeDescription;
 }

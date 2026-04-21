@@ -2,7 +2,7 @@ import { EntityPropertySchema, EntityPropertyType, SelectOption } from 'types';
 import { ListResponse } from 'utils/FetchUtils';
 import {
   Box,
-  BrandPaypal,
+  CreditCard,
   Briefcase,
   Cash,
   Cpu,
@@ -100,12 +100,12 @@ class PageConfigs {
 
   static paymentMethodIconMap: Record<PaymentMethodType, Icon> = {
     [PaymentMethodType.CASH]: Cash,
-    [PaymentMethodType.PAYPAL]: BrandPaypal,
+    [PaymentMethodType.PAYPAL]: CreditCard,
   };
 
   static paymentMethodNameMap: Record<PaymentMethodType, string> = {
     [PaymentMethodType.CASH]: 'Thanh toán tiền mặt',
-    [PaymentMethodType.PAYPAL]: 'Thanh toán PayPal',
+    [PaymentMethodType.PAYPAL]: 'Thanh toán online',
   };
 }
 

@@ -15,5 +15,7 @@ public class VariantRequest {
     private Double price;
     @Nullable
     private JsonNode properties;
+    @Nullable
+    private JsonNode specifications;
     private Integer status;
 }

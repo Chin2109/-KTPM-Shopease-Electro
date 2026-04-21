@@ -1,10 +1,30 @@
-import React from 'react';
-import useTitle from 'hooks/use-title';
-import { Avatar, Button, Card, Container, Divider, Grid, Group, Stack, Text, ThemeIcon, Title } from '@mantine/core';
-import { Home, Lock, Mail, Mars, Phone, Venus } from 'tabler-icons-react';
-import { Link } from 'react-router-dom';
-import useAuthStore from 'stores/use-auth-store';
-import { ClientUserNavbar } from 'components';
+import React from "react";
+import {
+  Avatar,
+  Button,
+  Card,
+  Container,
+  Divider,
+  Grid,
+  Group,
+  Stack,
+  Text,
+  ThemeIcon,
+  Title,
+  Badge,
+} from "@mantine/core";
+import { ClientUserNavbar } from "components";
+import useTitle from "hooks/use-title";
+import { Link } from "react-router-dom";
+import useAuthStore from "stores/use-auth-store";
+import {
+  Home,
+  Lock,
+  Mail,
+  Mars,
+  Phone,
+  Venus,
+} from "tabler-icons-react";
 
 function ClientUser() {
   useTitle();
@@ -16,15 +36,18 @@ function ClientUser() {
       <Container size="xl">
         <Grid gutter="lg">
           <Grid.Col md={3}>
-            <ClientUserNavbar/>
+            <ClientUserNavbar />
           </Grid.Col>
 
           <Grid.Col md={9}>
             <Card radius="md" shadow="sm" p="lg">
               <Stack>
-                <Title order={2}>
-                  Thông tin tài khoản
-                </Title>
+                <Group spacing="xs" align="center">
+                  <Title order={2}>Thông tin tài khoản</Title>
+                  {user?.groupName && (
+                    <Badge variant="filled">{user?.groupName}</Badge>
+                  )}
+                </Group>
 
                 <Grid gutter="lg">
                   <Grid.Col lg={6}>
@@ -35,7 +58,9 @@ function ClientUser() {
 
                       <Group position="apart">
                         <Group>
-                          <Avatar color="cyan" size="lg" radius="md">{user?.fullname.charAt(0)}</Avatar>
+                          <Avatar color="cyan" size="lg" radius="md">
+                            {user?.fullname.charAt(0)}
+                          </Avatar>
                           <Stack spacing={0}>
                             <Text weight={500}>{user?.fullname}</Text>
                             <Text color="dimmed">@{user?.username}</Text>
@@ -51,30 +76,37 @@ function ClientUser() {
                         </Button>
                       </Group>
 
-                      <Divider my={3.5} variant="dotted"/>
+                      <Divider my={3.5} variant="dotted" />
 
                       <Group spacing="sm">
                         <ThemeIcon radius="xl" size="lg" variant="light">
-                          {user?.gender === 'M'
-                            ? <Mars size={20} strokeWidth={1.5}/>
-                            : <Venus size={20} strokeWidth={1.5}/>}
+                          {user?.gender === "M" ? (
+                            <Mars size={20} strokeWidth={1.5} />
+                          ) : (
+                            <Venus size={20} strokeWidth={1.5} />
+                          )}
                         </ThemeIcon>
                         <Stack spacing={0}>
                           <Text weight={500}>Giới tính</Text>
-                          {user?.gender === 'M' ? 'Nam' : 'Nữ'}
+                          {user?.gender === "M" ? "Nam" : "Nữ"}
                         </Stack>
                       </Group>
 
-                      <Group spacing="sm" sx={{ flexWrap: 'nowrap' }}>
+                      <Group spacing="sm" sx={{ flexWrap: "nowrap" }}>
                         <ThemeIcon radius="xl" size="lg" variant="light">
-                          <Home size={20} strokeWidth={1.5}/>
+                          <Home size={20} strokeWidth={1.5} />
                         </ThemeIcon>
                         <Stack spacing={0}>
                           <Text weight={500}>Địa chỉ</Text>
                           <Text>
-                            {[user?.address.line, user?.address.ward?.name, user?.address.district?.name, user?.address.province?.name]
+                            {[
+                              user?.address.line,
+                              user?.address.ward?.name,
+                              user?.address.district?.name,
+                              user?.address.province?.name,
+                            ]
                               .filter(Boolean)
-                              .join(', ')}
+                              .join(", ")}
                           </Text>
                         </Stack>
                       </Group>
@@ -90,7 +122,7 @@ function ClientUser() {
                       <Group position="apart">
                         <Group spacing="sm">
                           <ThemeIcon radius="xl" size="lg" variant="light">
-                            <Phone size={20} strokeWidth={1.5}/>
+                            <Phone size={20} strokeWidth={1.5} />
                           </ThemeIcon>
                           <Stack spacing={0}>
                             <Text weight={500}>Số điện thoại</Text>
@@ -110,7 +142,7 @@ function ClientUser() {
                       <Group position="apart">
                         <Group spacing="sm">
                           <ThemeIcon radius="xl" size="lg" variant="light">
-                            <Mail size={20} strokeWidth={1.5}/>
+                            <Mail size={20} strokeWidth={1.5} />
                           </ThemeIcon>
                           <Stack spacing={0}>
                             <Text weight={500}>Email</Text>
@@ -134,7 +166,7 @@ function ClientUser() {
                       <Group position="apart">
                         <Group spacing="sm">
                           <ThemeIcon radius="xl" size="lg" variant="light">
-                            <Lock size={20} strokeWidth={1.5}/>
+                            <Lock size={20} strokeWidth={1.5} />
                           </ThemeIcon>
                           <Text weight={500}>Đổi mật khẩu</Text>
                         </Group>

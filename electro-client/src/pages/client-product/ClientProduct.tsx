@@ -1,49 +1,86 @@
 import React from 'react';
 import { Container, Skeleton, Stack, useMantineTheme } from '@mantine/core';
-import { useQuery } from 'react-query';
-import FetchUtils, { ErrorMessage } from 'utils/FetchUtils';
-import ResourceURL from 'constants/ResourceURL';
-import NotifyUtils from 'utils/NotifyUtils';
-import { useParams } from 'react-router-dom';
-import { ClientProductResponse } from 'types';
-import useTitle from 'hooks/use-title';
 import { ClientError } from 'components';
-import ClientProductIntro from 'pages/client-product/ClientProductIntro';
-import ClientProductSpecification from 'pages/client-product/ClientProductSpecification';
+import ResourceURL from 'constants/ResourceURL';
+import useTitle from 'hooks/use-title';
 import ClientProductDescription from 'pages/client-product/ClientProductDescription';
-import ClientProductReviews from 'pages/client-product/ClientProductReviews';
+import ClientProductIntro from 'pages/client-product/ClientProductIntro';
 import ClientProductRelatedProducts from 'pages/client-product/ClientProductRelatedProducts';
+import ClientProductReviews from 'pages/client-product/ClientProductReviews';
+import ClientProductSpecification from 'pages/client-product/ClientProductSpecification';
+import { useEffect, useState } from 'react';
+import { useQuery } from 'react-query';
+import { useParams } from 'react-router-dom';
+import { ClientProductResponse, ClientProductResponse_ClientVariantResponse } from 'types';
+import FetchUtils, { ErrorMessage } from 'utils/FetchUtils';
+import NotifyUtils from 'utils/NotifyUtils';
+import ClientProductGuarantee from './ClientProductGuarantee';
 
 function ClientProduct() {
   const theme = useMantineTheme();
 
   const { slug } = useParams();
 
-  const { productResponse, isLoadingProductResponse, isErrorProductResponse } = useGetProductApi(slug as string);
+
+
+  const { productResponse, isLoadingProductResponse, isErrorProductResponse } =
+    useGetProductApi(slug as string);
   const product = productResponse as ClientProductResponse;
+
+  // 1. Thêm State để lưu variant đang chọn
+  const [selectedVariant, setSelectedVariant] =
+    useState<ClientProductResponse_ClientVariantResponse>(
+      {} as ClientProductResponse_ClientVariantResponse,
+    );
+
+  // 2. Tự động chọn variant đầu tiên khi dữ liệu load xong
+  useEffect(() => {
+    if (product?.productVariants?.length > 0) {
+      setSelectedVariant(product.productVariants[0]);
+    }
+  }, [product]);
+  
   useTitle(product?.productName);
 
   if (isLoadingProductResponse) {
-    return <ClientProductSkeleton/>;
+    return <ClientProductSkeleton />;
   }
 
   if (isErrorProductResponse) {
-    return <ClientError/>;
+    return <ClientError />;
   }
 
   return (
     <main>
       <Container size="xl">
         <Stack spacing={theme.spacing.xl * 2}>
-          <ClientProductIntro product={product}/>
+          <ClientProductIntro
+            product={product}
+            selectedVariant={selectedVariant}
+            setSelectedVariant={setSelectedVariant}
+          />
 
-          {product.productSpecifications && <ClientProductSpecification product={product}/>}
+          {(product.productSpecifications ||
+            selectedVariant?.variantSpecifications) && (
+            <ClientProductSpecification
+              product={product}
+              selectedVariant={selectedVariant}
+            />
+          )}
 
-          {product.productDescription && <ClientProductDescription product={product}/>}
+          {product?.guaranteeName && (
+            <ClientProductGuarantee product={product} />
+          )}
 
-          <ClientProductReviews productSlug={slug as string}/>
+          {product.productDescription && (
+            <ClientProductDescription product={product} />
+          )}
 
-          {product.productRelatedProducts.length > 0 && <ClientProductRelatedProducts product={product}/>}
+          <ClientProductReviews productSlug={slug as string} />
+
+          {product.productRelatedProducts.length > 0 && (
+            <ClientProductRelatedProducts product={product} />
+          )}
         </Stack>
       </Container>
     </main>

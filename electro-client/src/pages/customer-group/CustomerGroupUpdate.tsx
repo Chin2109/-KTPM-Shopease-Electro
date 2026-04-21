@@ -1,18 +1,26 @@
-import React from 'react';
-import { Button, ColorInput, Divider, Grid, Group, Paper, Select, Stack, TextInput } from '@mantine/core';
-import { useParams } from 'react-router-dom';
-import { CreateUpdateTitle, DefaultPropertyPanel } from 'components';
-import CustomerGroupConfigs from 'pages/customer-group/CustomerGroupConfigs';
-import useCustomerGroupUpdateViewModel from 'pages/customer-group/CustomerGroupUpdate.vm';
+
+import React from "react";
+import {
+  Button,
+  ColorInput,
+  Divider,
+  Grid,
+  Group,
+  NumberInput,
+  Paper,
+  Select,
+  Stack,
+  TextInput,
+} from "@mantine/core";
+import { CreateUpdateTitle, DefaultPropertyPanel } from "components";
+import CustomerGroupConfigs from "pages/customer-group/CustomerGroupConfigs";
+import useCustomerGroupUpdateViewModel from "pages/customer-group/CustomerGroupUpdate.vm";
+import { useParams } from "react-router-dom";
 
 function CustomerGroupUpdate() {
   const { id } = useParams();
-  const {
-    customerGroup,
-    form,
-    handleFormSubmit,
-    statusSelectList,
-  } = useCustomerGroupUpdateViewModel(Number(id));
+  const { customerGroup, form, handleFormSubmit, statusSelectList } =
+    useCustomerGroupUpdateViewModel(Number(id));
 
   if (!customerGroup) {
     return null;
@@ -41,28 +49,28 @@ function CustomerGroupUpdate() {
                 <TextInput
                   required
                   label={CustomerGroupConfigs.properties.code.label}
-                  {...form.getInputProps('code')}
+                  {...form.getInputProps("code")}
                 />
               </Grid.Col>
               <Grid.Col xs={6}>
                 <TextInput
                   required
                   label={CustomerGroupConfigs.properties.name.label}
-                  {...form.getInputProps('name')}
+                  {...form.getInputProps("name")}
                 />
               </Grid.Col>
               <Grid.Col>
                 <TextInput
                   required
                   label={CustomerGroupConfigs.properties.description.label}
-                  {...form.getInputProps('description')}
+                  {...form.getInputProps("description")}
                 />
               </Grid.Col>
               <Grid.Col xs={6}>
                 <ColorInput
                   required
                   label={CustomerGroupConfigs.properties.color.label}
-                  {...form.getInputProps('color')}
+                  {...form.getInputProps("color")}
                   placeholder="Chọn màu"
                 />
               </Grid.Col>
@@ -72,15 +80,34 @@ function CustomerGroupUpdate() {
                   label={CustomerGroupConfigs.properties.status.label}
                   placeholder="--"
                   data={statusSelectList}
-                  {...form.getInputProps('status')}
+                  {...form.getInputProps("status")}
+                />
+              </Grid.Col>
+              <Grid.Col xs={6}>
+                <NumberInput
+                  label={CustomerGroupConfigs.properties.minRewardPoint.label}
+                  placeholder="0"
+                  {...form.getInputProps("minRewardPoint")}
+                />
+              </Grid.Col>
+
+              <Grid.Col xs={6}>
+                <NumberInput
+                  label={CustomerGroupConfigs.properties.discountPercent.label}
+                  placeholder="0"
+                  precision={2} // Cho phép nhập số thập phân (BigDecimal)
+                  step={0.1}
+                  {...form.getInputProps("discountPercent")}
                 />
               </Grid.Col>
             </Grid>
 
-            <Divider mt="xs"/>
+            <Divider mt="xs" />
 
             <Group position="apart" p="sm">
-              <Button variant="default" onClick={form.reset}>Mặc định</Button>
+              <Button variant="default" onClick={form.reset}>
+                Mặc định
+              </Button>
               <Button type="submit">Cập nhật</Button>
             </Group>
           </Stack>

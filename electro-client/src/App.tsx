@@ -86,6 +86,8 @@ import RewardManage from 'pages/reward-strategy';
 import ClientReward from 'pages/client-reward';
 import ClientSignup from 'pages/client-signup';
 import ClientForgotPassword, { ClientChangePassword } from 'pages/client-forgot-password';
+import GuaranteeTicketManage, { GuaranteeTicketCreate, GuaranteeTicketUpdate } from 'pages/guarantee-ticket';
+
 
 const queryClient = new QueryClient();
 
@@ -93,6 +95,7 @@ function App() {
   const [colorScheme, setColorScheme] = useState<ColorScheme>('light');
   const toggleColorScheme = (value?: ColorScheme) =>
     setColorScheme(value || (colorScheme === 'dark' ? 'light' : 'dark'));
+  
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -281,7 +284,11 @@ function App() {
                   {/* GUARANTEE */}
                   <Route path={ManagerPath.GUARANTEE} element={<GuaranteeManage/>}/>
                   <Route path={ManagerPath.GUARANTEE + '/create'} element={<GuaranteeCreate/>}/>
-                  <Route path={ManagerPath.GUARANTEE + '/update/:id'} element={<GuaranteeUpdate/>}/>
+                  <Route path={ManagerPath.GUARANTEE + '/update/:id'} element={<GuaranteeUpdate />} />
+                   {/* GUARANTEE_TICKET */}
+                  <Route path={ManagerPath.GUARANTEE_TICKET} element={<GuaranteeTicketManage/>}/>
+                  <Route path={ManagerPath.GUARANTEE_TICKET + '/create'} element={<GuaranteeTicketCreate/>}/>
+                  <Route path={ManagerPath.GUARANTEE_TICKET + '/update/:id'} element={<GuaranteeTicketUpdate/>}/>
                   {/* PROPERTY */}
                   <Route path={ManagerPath.PROPERTY} element={<PropertyManage/>}/>
                   <Route path={ManagerPath.PROPERTY + '/create'} element={<PropertyCreate/>}/>

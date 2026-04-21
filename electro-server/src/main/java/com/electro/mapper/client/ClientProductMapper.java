@@ -3,6 +3,7 @@ package com.electro.mapper.client;
 import com.electro.dto.client.ClientListedProductResponse;
 import com.electro.dto.client.ClientProductResponse;
 import com.electro.entity.general.Image;
+import com.electro.entity.inventory.DocketVariant;
 import com.electro.entity.product.Product;
 import com.electro.entity.product.Variant;
 import com.electro.mapper.general.ImageMapper;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Component
@@ -33,6 +35,7 @@ public class ClientProductMapper {
 
         clientListedProductResponse
                 .setProductId(product.getId())
+                .setProductStatus(product.getStatus())
                 .setProductName(product.getName())
                 .setProductSlug(product.getSlug())
                 .setProductThumbnail(product.getImages().stream()
@@ -52,11 +55,17 @@ public class ClientProductMapper {
                         : List.of(prices.get(0), prices.get(prices.size() - 1))
         );
 
+        product.getVariants().forEach(v -> {
+            System.out.println("VARIANT ID = " + v.getId());
+            System.out.println("SPEC RAW = " + v.getSpecifications());
+        });
+
         clientListedProductResponse.setProductVariants(product.getVariants().stream()
                 .map(variant -> new ClientListedProductResponse.ClientListedVariantResponse()
                         .setVariantId(variant.getId())
                         .setVariantPrice(variant.getPrice())
-                        .setVariantProperties(variant.getProperties()))
+                        .setVariantProperties(variant.getProperties())
+                        .setVariantSpecifications(variant.getSpecifications()))
                 .collect(Collectors.toList()));
 
         clientListedProductResponse.setProductSaleable(productInventories.stream()
@@ -83,6 +92,7 @@ public class ClientProductMapper {
         ClientProductResponse clientProductResponse = new ClientProductResponse();
 
         clientProductResponse.setProductId(product.getId());
+        clientProductResponse.setProductStatus(product.getStatus());
         clientProductResponse.setProductName(product.getName());
         clientProductResponse.setProductSlug(product.getSlug());
         clientProductResponse.setProductShortDescription(product.getShortDescription());
@@ -93,14 +103,24 @@ public class ClientProductMapper {
                 .setBrandId(product.getBrand().getId())
                 .setBrandName(product.getBrand().getName()));
         clientProductResponse.setProductSpecifications(product.getSpecifications());
+
+        List<Long> variantIds = product.getVariants().stream()
+                .map(Variant::getId)
+                .collect(Collectors.toList()); // Standard Java 8+ approach
+        List<DocketVariant> docketVariants = docketVariantRepository.findByVariantIds(variantIds);
+        Map<Long, List<DocketVariant>> docketVariantMap = docketVariants.stream()
+                .collect(Collectors.groupingBy(dv -> dv.getVariant().getId()));
+
         clientProductResponse.setProductVariants(product.getVariants().stream()
                 .map(variant -> new ClientProductResponse.ClientVariantResponse()
                         .setVariantId(variant.getId())
                         .setVariantPrice(variant.getPrice())
                         .setVariantProperties(variant.getProperties())
-                        .setVariantInventory(InventoryUtils
-                                .calculateInventoryIndices(docketVariantRepository.findByVariantId(variant.getId()))
-                                .get("canBeSold")))
+                        .setVariantSpecifications(variant.getSpecifications())
+                        .setVariantInventory(
+                                InventoryUtils.calculateInventoryIndices(
+                                        docketVariantMap.getOrDefault(variant.getId(), Collections.emptyList())
+                                ).get("canBeSold")))
                 .collect(Collectors.toList()));
         clientProductResponse.setProductSaleable(productInventories.stream()
                 .filter(productInventory -> productInventory.getProductId().equals(product.getId()))
@@ -116,6 +136,12 @@ public class ClientProductMapper {
                 .findFirst()
                 .map(promotionMapper::entityToClientResponse)
                 .orElse(null));
+        clientProductResponse.setGuaranteeName(
+                product.getGuarantee() != null ? product.getGuarantee().getName() : null
+        );
+        clientProductResponse.setGuaranteeDescription(
+                product.getGuarantee() != null ? product.getGuarantee().getDescription() : null
+        );
 
         return clientProductResponse;
     }

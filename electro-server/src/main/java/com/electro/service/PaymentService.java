@@ -3,6 +3,8 @@ package com.electro.service;
 import com.electro.config.payment.paypal.VNPayConfig;
 import com.electro.config.payment.paypal.VNPayUtil;
 import com.electro.dto.PaymentDTO;
+import com.electro.entity.order.Order;
+import com.electro.repository.order.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +20,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class PaymentService {
     private final VNPayConfig vnPayConfig;
+    private final OrderRepository orderRepository;
 
     public PaymentDTO.VNPayResponse createVnPayPayment(HttpServletRequest request,
                                                        long amount,
@@ -56,6 +59,11 @@ public class PaymentService {
         queryUrl += "&vnp_SecureHash=" + vnpSecureHash;
 
         String paymentUrl = vnPayConfig.getVnp_PayUrl() + "?" + queryUrl;
+
+        //chỉnh status thanh toán thành công
+        Order order = orderRepository.findByCode(orderCode).orElseThrow();
+        order.setPaymentStatus(2);
+        orderRepository.save(order);
 
         return PaymentDTO.VNPayResponse.builder()
                 .code("ok")

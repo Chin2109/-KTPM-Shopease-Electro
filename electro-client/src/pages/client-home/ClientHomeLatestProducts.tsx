@@ -61,26 +61,34 @@ function ClientHomeLatestProducts() {
   if (products && products.totalElements > 0) {
     resultFragment = (
       <Grid>
-        {products.content.map((product, index) => (
+        {/* {products.content.map((product, index) => (
           <Grid.Col key={index} span={6} sm={4} md={3}>
-            <ClientProductCard product={product}/>
+            {product.productStatus === 1 && <ClientProductCard product={product}/>}
           </Grid.Col>
+        ))} */}
+
+        {products.content
+          .filter(product => product.productStatus === 1) // Loại bỏ trước khi map
+          .map((product, index) => (
+            <Grid.Col key={product.productId || index} span={6} sm={4} md={3}>
+              <ClientProductCard product={product} />
+            </Grid.Col>
         ))}
-      </Grid>
-    );
-  }
+              </Grid>
+            );
+        }
 
   return (
     <Stack>
       <Group position="apart">
         <Title order={2}>
           <Text color="orange" inherit>
-            Sản phẩm mới nhất
+            Sản phẩm tại cửa hàng
           </Text>
         </Title>
-        <Button variant="light" leftIcon={<List size={16}/>} radius="md">
+        {/* <Button variant="light" leftIcon={<List size={16}/>} radius="md">
           Xem tất cả
-        </Button>
+        </Button> */}
       </Group>
 
       {resultFragment}

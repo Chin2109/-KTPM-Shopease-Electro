@@ -55,10 +55,16 @@ function OrderCreate() {
       const selectList: SelectOption[] = userListResponse.content.map((item) => ({
         value: String(item.id),
         label: item.fullname,
+        discountPercent: item.discountPercent,
       }));
       setUserSelectList(selectList);
+      console.log('Fetched user list for select input:', selectList);
     }
   );
+
+  const selectedUser = userSelectList.find(
+  (u) => u.value === form.values.userId
+);
 
   return (
     <Stack pb={50}>
@@ -104,6 +110,7 @@ function OrderCreate() {
                 <Grid.Col span={6}>
                   <Text size="sm" weight={500}>Thuế ({form.values.tax * 100 + '%'}):</Text>
                 </Grid.Col>
+
                 <Grid.Col span={6}>
                   <Text size="md" color="blue" weight={500} sx={{ textAlign: 'right' }}>
                     {MiscUtils.formatPrice(Number((form.values.totalAmount * form.values.tax).toFixed(0))) + ' ₫'}
@@ -112,6 +119,7 @@ function OrderCreate() {
                 <Grid.Col span={6}>
                   <Text size="sm" weight={500}>Phí vận chuyển:</Text>
                 </Grid.Col>
+
                 <Grid.Col span={6}>
                   <NumberInput
                     size="xs"
@@ -127,6 +135,25 @@ function OrderCreate() {
                     disabled
                   />
                 </Grid.Col>
+              {selectedUser?.discountPercent && (
+                <>
+                  <Grid.Col span={6}>
+                    <Text size="sm" weight={500}>
+                      Khuyến mãi ({selectedUser.discountPercent}%):
+                    </Text>
+                  </Grid.Col>
+
+                  <Grid.Col span={6}>
+                    <Text size="md" color="blue" weight={500} sx={{ textAlign: 'right' }}>
+                      {MiscUtils.formatPrice(
+                        Math.round(
+                          (form.values.totalAmount * (selectedUser?.discountPercent || 0)) / 100
+                        )
+                      ) + " ₫"}
+                    </Text>
+                  </Grid.Col>
+                </>
+              )}
                 <Grid.Col span={6}>
                   <Text size="sm" weight={500}>Tổng tiền trả:</Text>
                 </Grid.Col>

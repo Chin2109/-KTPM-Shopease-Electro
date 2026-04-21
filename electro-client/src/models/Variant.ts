@@ -1,5 +1,6 @@
 import BaseResponse from 'models/BaseResponse';
 import { CollectionWrapper } from 'types';
+import { SpecificationItem } from './Product';
 
 export interface VariantResponse extends BaseResponse {
   product: ProductResponse;
@@ -29,5 +30,6 @@ export interface VariantRequest {
   cost: number;
   price: number;
   properties: CollectionWrapper<VariantPropertyItem> | null;
+  specifications: CollectionWrapper<SpecificationItem> | null;
   status: number;
 }

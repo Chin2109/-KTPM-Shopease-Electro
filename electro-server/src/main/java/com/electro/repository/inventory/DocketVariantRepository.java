@@ -37,4 +37,13 @@ public interface DocketVariantRepository extends JpaRepository<DocketVariant, Do
         return findAll(spec);
     }
 
+    default List<DocketVariant> findByVariantIds(List<Long> variantIds) {
+        Specification<DocketVariant> spec = (root, query, cb) -> {
+            query.orderBy(cb.desc(root.get("docket").get("id")));
+            return root.get("variant").get("id").in(variantIds);
+        };
+
+        return findAll(spec);
+    }
+
 }

@@ -1,5 +1,324 @@
-import React from 'react';
+// import React, { useEffect } from "react";
+// import {
+//   Alert,
+//   Badge,
+//   Card,
+//   ColorSwatch,
+//   Container,
+//   Divider,
+//   Grid,
+//   Group,
+//   MantineColor,
+//   Skeleton,
+//   Stack,
+//   Text,
+//   ThemeIcon,
+//   Title,
+//   useMantineTheme,
+// } from "@mantine/core";
+// import { ClientUserNavbar } from "components";
+// import ResourceURL from "constants/ResourceURL";
+// import useTitle from "hooks/use-title";
+// import { RewardType } from "models/RewardStrategy";
+// import { useQuery } from "react-query";
+// import useAuthStore from "stores/use-auth-store";
+// import {
+//   AlertTriangle,
+//   Award,
+//   FileBarcode,
+//   Icon,
+//   InfoCircle,
+//   Star,
+// } from "tabler-icons-react";
+// import { ClientRewardResponse } from "types";
+// import DateUtils from "utils/DateUtils";
+// import FetchUtils, { ErrorMessage, ListResponse } from "utils/FetchUtils";
+// import NotifyUtils from "utils/NotifyUtils";
+// import CustomerGroupConfigs from "pages/customer-group/CustomerGroupConfigs";
+// import { CustomerGroupResponse } from "models/CustomerGroup";
+// import useGetAllApi from "hooks/use-get-all-api";
+// import PageConfigs from "pages/PageConfigs";
+// import { UserResponse } from "models/User";
+// import { group } from "console";
+
+// type RewardLogInfo = {
+//   icon: Icon;
+//   color: MantineColor;
+// };
+
+// const rewardLogInfoMap: Record<RewardType, RewardLogInfo> = {
+//   [RewardType.SUCCESS_ORDER]: {
+//     icon: FileBarcode,
+//     color: "blue",
+//   },
+//   [RewardType.ADD_REVIEW]: {
+//     icon: Star,
+//     color: "yellow",
+//   },
+// };
+
+// function ClientReward() {
+//   useTitle();
+
+//   const { user, updateUser } = useAuthStore();
+
+//   const theme = useMantineTheme();
+
+//   const { rewardResponse, isLoadingRewardResponse, isErrorRewardResponse } =
+//     useGetRewardApi();
+  
+//     const {
+//       isLoading,
+//       data: listResponse = PageConfigs.initialListResponse as ListResponse<CustomerGroupResponse>,
+//     } = useGetAllApi<CustomerGroupResponse>(
+//       CustomerGroupConfigs.resourceUrl,
+//       CustomerGroupConfigs.resourceKey,
+//     );
+
+//   useEffect(() => {
+//   if (!rewardResponse || !user || !listResponse?.content) return;
+
+//   const score = rewardResponse.rewardTotalScore;
+
+//   const matchedGroup = [...listResponse.content]
+//   .sort((a, b) => (b.minRewardPoint ?? 0) - (a.minRewardPoint ?? 0))
+//     .find(group => score >= (group.minRewardPoint ?? 0));
+
+//   if (!matchedGroup) return;
+//   if (user.groupName !== matchedGroup.name) {
+//     updateUser({
+//       ...user,
+//       groupName: matchedGroup.name,
+//     });
+//   }
+
+// }, [rewardResponse?.rewardTotalScore, listResponse?.content]);
+
+  
+
+
+//   let rewardContentFragment;
+
+//   if (isLoadingRewardResponse) {
+//     rewardContentFragment = (
+//       <Stack>
+//         {Array(5)
+//           .fill(0)
+//           .map((_, index) => (
+//             <Skeleton key={index} height={50} radius="md" />
+//           ))}
+//       </Stack>
+//     );
+//   }
+
+//   if (isErrorRewardResponse) {
+//     rewardContentFragment = (
+//       <Stack
+//         my={theme.spacing.xl}
+//         sx={{ alignItems: "center", color: theme.colors.pink[6] }}
+//       >
+//         <AlertTriangle size={125} strokeWidth={1} />
+//         <Text size="xl" weight={500}>
+//           Đã có lỗi xảy ra
+//         </Text>
+//       </Stack>
+//     );
+//   }
+
+//   if (rewardResponse) {
+//     const reward = rewardResponse;
+
+//     rewardContentFragment = (
+//       <>
+//         <Stack spacing="xs">
+//           <Text weight={600} size="lg" color="grape">
+//             Hệ thống cấp bậc thành viên
+//           </Text>
+
+//           {listResponse.content
+//             .sort((a, b) => (a.minRewardPoint || 0) - (b.minRewardPoint || 0))
+//             .map((group) => {
+//               const isCurrentGroup = user?.groupName === group.name;
+//               const alertColor = group.color
+//                 ? group.color.toLowerCase()
+//                 : "gray";
+
+//               return (
+//                 <Alert
+//                   key={group.id}
+//                   color={alertColor}
+//                   variant={isCurrentGroup ? "filled" : "light"}
+//                   radius="md"
+//                   p="xs" // Thu nhỏ padding để dòng trông gọn hơn
+//                 >
+//                   <Group position="apart" noWrap>
+//                     <Group spacing="xs" sx={{ flex: 1 }}>
+//                       <Award size={18} />
+//                       <Text
+//                         weight={700}
+//                         size="sm"
+//                         sx={{ whiteSpace: "nowrap" }}
+//                       >
+//                         {group.name}:
+//                       </Text>
+//                       <Group spacing="xs" sx={{ flex: 1 }} noWrap>
+//                         {/* Phần mô tả bị cắt nếu quá dài */}
+//                         <Text
+//                           size="sm"
+//                           sx={{
+//                             flexShrink: 1,
+//                             overflow: "hidden",
+//                             textOverflow: "ellipsis",
+//                             whiteSpace: "nowrap",
+//                           }}
+//                         >
+//                           {group.description}
+//                         </Text>
+
+//                         {/* Dấu gạch ngang tách biệt */}
+//                         <Text size="sm" color="dimmed">
+//                           -
+//                         </Text>
+
+//                         {/* Phần ưu đãi cố định, không bao giờ bị mất */}
+//                         <Text size="sm" sx={{ whiteSpace: "nowrap" }}>
+//                           Ưu đãi {group.discountPercent}%
+//                         </Text>
+//                       </Group>
+//                     </Group>
+
+//                     <Group spacing="sm">
+//                       <Badge
+//                         variant="outline"
+//                         color={isCurrentGroup ? "white" : alertColor}
+//                       >
+//                         {group.minRewardPoint || 0} điểm
+//                       </Badge>
+//                       {isCurrentGroup && (
+//                         <Badge
+//                           variant="filled"
+//                           color="white"
+              
+//                           size="sm"
+//                         >
+//                           Hiện tại
+//                         </Badge>
+//                       )}
+//                     </Group>
+//                   </Group>
+//                 </Alert>
+//               );
+//             })}
+//         </Stack>
+
+//         <Group position="apart">
+//           <Award size={85} strokeWidth={1} color={theme.colors.grape[5]} />
+//           <Stack align="center">
+//             <Text color="grape" weight={500}>
+//               Tổng điểm thưởng tích lũy của bạn là
+//             </Text>
+//             <Badge radius="md" color="grape" size="xl" variant="filled">
+//               {reward.rewardTotalScore}
+//             </Badge>
+//           </Stack>
+//           <Award size={85} strokeWidth={1} color={theme.colors.grape[5]} />
+//         </Group>
+
+//         <Card
+//           radius="md"
+//           p="lg"
+//           sx={{
+//             backgroundColor:
+//               theme.colorScheme === "dark"
+//                 ? theme.colors.dark[4]
+//                 : theme.colors.gray[0],
+//           }}
+//         >
+//           <Stack spacing="lg">
+//             <Text size="sm" color="dimmed" weight={500}>
+//               Lịch sử nhận điểm thưởng
+//             </Text>
+
+//             <Stack spacing="xs">
+//               {reward.rewardLogs.map((rewardLog) => {
+//                 const rewardLogInfo = rewardLogInfoMap[rewardLog.rewardLogType];
+
+//                 return (
+//                   <Group
+//                     key={rewardLog.rewardLogId}
+//                     spacing="sm"
+//                     sx={{ flexWrap: "nowrap" }}
+//                   >
+//                     <ThemeIcon
+//                       color={rewardLogInfo.color}
+//                       size="sm"
+//                       variant="filled"
+//                       radius="xl"
+//                     >
+//                       <rewardLogInfo.icon size={12} />
+//                     </ThemeIcon>
+//                     <Text size="xs" color="dimmed">
+//                       {DateUtils.isoDateToString(rewardLog.rewardLogCreatedAt)}
+//                     </Text>
+//                     <Text size="xs" color="blue" weight={500}>
+//                       +{rewardLog.rewardLogScore}
+//                     </Text>
+//                     <Text size="xs">{rewardLog.rewardLogNote}</Text>
+//                   </Group>
+//                 );
+//               })}
+//             </Stack>
+//           </Stack>
+//         </Card>
+//       </>
+//     );
+//   }
+
+//   return (
+//     <main>
+//       <Container size="xl">
+//         <Grid gutter="lg">
+//           <Grid.Col md={3}>
+//             <ClientUserNavbar />
+//           </Grid.Col>
+
+//           <Grid.Col md={9}>
+//             <Card radius="md" shadow="sm" p="lg">
+//               <Stack>
+//                 <Title order={2}>Điểm thưởng</Title>
+
+//                 {rewardContentFragment}
+//               </Stack>
+//             </Card>
+//           </Grid.Col>
+//         </Grid>
+//       </Container>
+//     </main>
+//   );
+// }
+
+// function useGetRewardApi() {
+//   const {
+//     data: rewardResponse,
+//     isLoading: isLoadingRewardResponse,
+//     isError: isErrorRewardResponse,
+//   } = useQuery<ClientRewardResponse, ErrorMessage>(
+//     ["client-api", "rewards", "getReward"],
+//     () => FetchUtils.getWithToken(ResourceURL.CLIENT_REWARD),
+//     {
+//       onError: () => NotifyUtils.simpleFailed("Lấy dữ liệu không thành công"),
+//       keepPreviousData: true,
+//     },
+//   );
+
+//   return { rewardResponse, isLoadingRewardResponse, isErrorRewardResponse };
+// }
+
+// export default ClientReward;
+
+import React, { useMemo } from "react";
 import {
+  Alert,
   Badge,
   Card,
   Container,
@@ -11,41 +330,80 @@ import {
   Text,
   ThemeIcon,
   Title,
-  useMantineTheme
-} from '@mantine/core';
-import { ClientUserNavbar } from 'components';
-import useTitle from 'hooks/use-title';
-import { ClientRewardResponse } from 'types';
-import { RewardType } from 'models/RewardStrategy';
-import { AlertTriangle, Award, FileBarcode, Icon, Star } from 'tabler-icons-react';
-import DateUtils from 'utils/DateUtils';
-import { useQuery } from 'react-query';
-import FetchUtils, { ErrorMessage } from 'utils/FetchUtils';
-import ResourceURL from 'constants/ResourceURL';
-import NotifyUtils from 'utils/NotifyUtils';
+  useMantineTheme,
+} from "@mantine/core";
+import { ClientUserNavbar } from "components";
+import ResourceURL from "constants/ResourceURL";
+import useTitle from "hooks/use-title";
+import { RewardType } from "models/RewardStrategy";
+import { useQuery } from "react-query";
+import useAuthStore from "stores/use-auth-store";
+import {
+  AlertTriangle,
+  Award,
+  FileBarcode,
+  Icon,
+  Star,
+} from "tabler-icons-react";
+import { ClientRewardResponse } from "types";
+import DateUtils from "utils/DateUtils";
+import FetchUtils, { ErrorMessage, ListResponse } from "utils/FetchUtils";
+import NotifyUtils from "utils/NotifyUtils";
+import CustomerGroupConfigs from "pages/customer-group/CustomerGroupConfigs";
+import { CustomerGroupResponse } from "models/CustomerGroup";
+import useGetAllApi from "hooks/use-get-all-api";
+import PageConfigs from "pages/PageConfigs";
 
 type RewardLogInfo = {
-  icon: Icon,
-  color: MantineColor,
+  icon: Icon;
+  color: MantineColor;
 };
 
 const rewardLogInfoMap: Record<RewardType, RewardLogInfo> = {
   [RewardType.SUCCESS_ORDER]: {
     icon: FileBarcode,
-    color: 'blue',
+    color: "blue",
   },
   [RewardType.ADD_REVIEW]: {
     icon: Star,
-    color: 'yellow',
+    color: "yellow",
   },
 };
 
 function ClientReward() {
   useTitle();
 
+  const { user } = useAuthStore(); // ❌ KHÔNG dùng updateUser nữa
   const theme = useMantineTheme();
 
-  const { rewardResponse, isLoadingRewardResponse, isErrorRewardResponse } = useGetRewardApi();
+  const { rewardResponse, isLoadingRewardResponse, isErrorRewardResponse } =
+    useGetRewardApi();
+
+  const {
+    data: listResponse = PageConfigs.initialListResponse as ListResponse<CustomerGroupResponse>,
+  } = useGetAllApi<CustomerGroupResponse>(
+    CustomerGroupConfigs.resourceUrl,
+    CustomerGroupConfigs.resourceKey
+  );
+
+  /**
+   * 🔥 AUTO GROUP (computed theo điểm)
+   */
+  const computedGroup = useMemo(() => {
+    if (!rewardResponse || !listResponse?.content) return null;
+
+    const score = rewardResponse.rewardTotalScore;
+
+    return [...listResponse.content]
+      .sort((a, b) => (b.minRewardPoint ?? 0) - (a.minRewardPoint ?? 0))
+      .find(group => score >= (group.minRewardPoint ?? 0)) || null;
+
+  }, [rewardResponse?.rewardTotalScore, listResponse?.content]);
+
+  /**
+   * 🎯 GROUP HIỂN THỊ (ưu tiên admin)
+   */
+  const displayGroupName = user?.groupName || computedGroup?.name;
 
   let rewardContentFragment;
 
@@ -53,7 +411,7 @@ function ClientReward() {
     rewardContentFragment = (
       <Stack>
         {Array(5).fill(0).map((_, index) => (
-          <Skeleton key={index} height={50} radius="md"/>
+          <Skeleton key={index} height={50} radius="md" />
         ))}
       </Stack>
     );
@@ -61,9 +419,14 @@ function ClientReward() {
 
   if (isErrorRewardResponse) {
     rewardContentFragment = (
-      <Stack my={theme.spacing.xl} sx={{ alignItems: 'center', color: theme.colors.pink[6] }}>
-        <AlertTriangle size={125} strokeWidth={1}/>
-        <Text size="xl" weight={500}>Đã có lỗi xảy ra</Text>
+      <Stack
+        my={theme.spacing.xl}
+        sx={{ alignItems: "center", color: theme.colors.pink[6] }}
+      >
+        <AlertTriangle size={125} strokeWidth={1} />
+        <Text size="xl" weight={500}>
+          Đã có lỗi xảy ra
+        </Text>
       </Stack>
     );
   }
@@ -73,43 +436,121 @@ function ClientReward() {
 
     rewardContentFragment = (
       <>
+        {/* 🔥 HIỂN THỊ GROUP */}
+        <Stack spacing={2}>
+          <Text weight={600}>
+            Nhóm hiện tại: {displayGroupName || "Chưa xác định"}
+          </Text>
+
+          {/* Nếu admin override */}
+          {user?.groupName &&
+            computedGroup &&
+            user.groupName !== computedGroup.name && (
+              <Text size="sm" color="dimmed">
+                (Theo điểm: {computedGroup.name})
+              </Text>
+            )}
+        </Stack>
+
+        {/* 🔥 DANH SÁCH GROUP */}
+        <Stack spacing="xs" mt="md">
+          <Text weight={600} size="lg" color="grape">
+            Hệ thống cấp bậc thành viên
+          </Text>
+
+          {listResponse.content
+            .sort((a, b) => (a.minRewardPoint || 0) - (b.minRewardPoint || 0))
+            .map((group) => {
+              
+              const isCurrentGroup =
+                displayGroupName === group.name; // ✅ FIX CHÍNH
+
+              const alertColor = group.color
+                ? group.color.toLowerCase()
+                : "gray";
+
+              return (
+                <Alert
+                  key={group.id}
+                  color={alertColor}
+                  variant={isCurrentGroup ? "filled" : "light"}
+                  radius="md"
+                  p="xs"
+                >
+                  <Group position="apart" noWrap>
+                    <Group spacing="xs" sx={{ flex: 1 }}>
+                      <Award size={18} />
+                      <Text weight={700} size="sm">
+                        {group.name}:
+                      </Text>
+
+                      <Text size="sm" sx={{ flex: 1 }}>
+                        {group.description} - Ưu đãi {group.discountPercent}%
+                      </Text>
+                    </Group>
+
+                    <Group spacing="sm">
+                      <Badge
+                        variant="outline"
+                        color={isCurrentGroup ? "white" : alertColor}
+                      >
+                        {group.minRewardPoint || 0} điểm
+                      </Badge>
+
+                      {isCurrentGroup && (
+                        <Badge variant="filled" color="white" size="sm">
+                          Hiện tại
+                        </Badge>
+                      )}
+                    </Group>
+                  </Group>
+                </Alert>
+              );
+            })}
+        </Stack>
+
+        {/* 🔥 SCORE */}
         <Group position="apart">
-          <Award size={85} strokeWidth={1} color={theme.colors.grape[5]}/>
+          <Award size={85} color={theme.colors.grape[5]} />
           <Stack align="center">
-            <Text color="grape" weight={500}>Tổng điểm thưởng tích lũy của bạn là</Text>
-            <Badge radius="md" color="grape" size="xl" variant="filled">{reward.rewardTotalScore}</Badge>
+            <Text color="grape" weight={500}>
+              Tổng điểm thưởng tích lũy của bạn
+            </Text>
+            <Badge radius="md" color="grape" size="xl">
+              {reward.rewardTotalScore}
+            </Badge>
           </Stack>
-          <Award size={85} strokeWidth={1} color={theme.colors.grape[5]}/>
+          <Award size={85} color={theme.colors.grape[5]} />
         </Group>
 
-        <Card
-          radius="md"
-          p="lg"
-          sx={{ backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[0] }}
-        >
+        {/* 🔥 LOG */}
+        <Card radius="md" p="lg">
           <Stack spacing="lg">
             <Text size="sm" color="dimmed" weight={500}>
               Lịch sử nhận điểm thưởng
             </Text>
 
             <Stack spacing="xs">
-              {reward.rewardLogs.map(rewardLog => {
+              {reward.rewardLogs.map((rewardLog) => {
                 const rewardLogInfo = rewardLogInfoMap[rewardLog.rewardLogType];
 
                 return (
-                  <Group key={rewardLog.rewardLogId} spacing="sm" sx={{ flexWrap: 'nowrap' }}>
-                    <ThemeIcon color={rewardLogInfo.color} size="sm" variant="filled" radius="xl">
-                      <rewardLogInfo.icon size={12}/>
+                  <Group key={rewardLog.rewardLogId} spacing="sm">
+                    <ThemeIcon color={rewardLogInfo.color} size="sm">
+                      <rewardLogInfo.icon size={12} />
                     </ThemeIcon>
+
                     <Text size="xs" color="dimmed">
-                      {DateUtils.isoDateToString(rewardLog.rewardLogCreatedAt)}
+                      {DateUtils.isoDateToString(
+                        rewardLog.rewardLogCreatedAt
+                      )}
                     </Text>
-                    <Text size="xs" color="blue" weight={500}>
+
+                    <Text size="xs" color="blue">
                       +{rewardLog.rewardLogScore}
                     </Text>
-                    <Text size="xs">
-                      {rewardLog.rewardLogNote}
-                    </Text>
+
+                    <Text size="xs">{rewardLog.rewardLogNote}</Text>
                   </Group>
                 );
               })}
@@ -125,16 +566,13 @@ function ClientReward() {
       <Container size="xl">
         <Grid gutter="lg">
           <Grid.Col md={3}>
-            <ClientUserNavbar/>
+            <ClientUserNavbar />
           </Grid.Col>
 
           <Grid.Col md={9}>
-            <Card radius="md" shadow="sm" p="lg">
+            <Card p="lg">
               <Stack>
-                <Title order={2}>
-                  Điểm thưởng
-                </Title>
-
+                <Title order={2}>Điểm thưởng</Title>
                 {rewardContentFragment}
               </Stack>
             </Card>
@@ -151,10 +589,10 @@ function useGetRewardApi() {
     isLoading: isLoadingRewardResponse,
     isError: isErrorRewardResponse,
   } = useQuery<ClientRewardResponse, ErrorMessage>(
-    ['client-api', 'rewards', 'getReward'],
+    ["client-api", "rewards", "getReward"],
     () => FetchUtils.getWithToken(ResourceURL.CLIENT_REWARD),
     {
-      onError: () => NotifyUtils.simpleFailed('Lấy dữ liệu không thành công'),
+      onError: () => NotifyUtils.simpleFailed("Lấy dữ liệu không thành công"),
       keepPreviousData: true,
     }
   );
