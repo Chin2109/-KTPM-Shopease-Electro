@@ -61,7 +61,7 @@ function ClientProduct() {
           />
 
           {(product.productSpecifications ||
-            selectedVariant?.specifications) && (
+            selectedVariant?.variantSpecifications) && (
             <ClientProductSpecification
               product={product}
               selectedVariant={selectedVariant}

@@ -60,7 +60,7 @@ public class VerificationServiceImpl implements VerificationService {
         // (3) Create user entity with status 2 (non-verified) and set role Customer
         User user = userMapper.requestToEntity(userRequest);
         user.setStatus(2); // Non-verified
-        user.setRoles(Set.of((Role) new Role().setId(3L)));
+        user.setRoles(Set.of((Role) new Role().setId(2L)));
 
         userRepository.save(user);
 

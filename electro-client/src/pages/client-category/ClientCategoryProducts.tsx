@@ -57,12 +57,24 @@ function ClientCategoryProducts({ categorySlug }: ClientCategoryProductsProps) {
   return (
     <>
       <Grid>
-        {products.content.map((product, index) => (
+        {/* {products.content.map((product, index) => (
           <Grid.Col key={index} span={6} sm={4}>
             <ClientProductCard product={product} search={activeSearch || ''}/>
           </Grid.Col>
-        ))}
+        ))} */}
+
+                {products.content
+                  .filter(product => product.productStatus === 1) // Loại bỏ trước khi map
+                  .map((product, index) => (
+                    <Grid.Col key={product.productId || index} span={6} sm={4} md={3}>
+                      <ClientProductCard product={product} />
+                    </Grid.Col>
+                ))}
       </Grid>
+
+      
+
+      
 
       <Group position="apart" mt={theme.spacing.lg}>
         <Pagination

@@ -34,7 +34,7 @@ function ClientProductSpecification({
     });
 
     // 2. Lấy thông số riêng của variant (ghi đè lên thông số chung nếu trùng mã)
-    selectedVariant?.specifications?.content.forEach((item) => {
+    selectedVariant?.variantSpecifications?.content.forEach((item) => {
       specsMap.set(item.code, item);
     });
 

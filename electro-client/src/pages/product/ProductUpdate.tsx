@@ -124,7 +124,7 @@ function ProductUpdate() {
                   setImageResponses={(imageResponses) => form.setFieldValue('images', imageResponses)}
                 />
               </Grid.Col>
-              <Grid.Col>
+              {/* <Grid.Col>
                 <Title order={4}>Thông số sản phẩm</Title>
                 <Text size="sm">Thêm các thông số của sản phẩm</Text>
               </Grid.Col>
@@ -135,7 +135,7 @@ function ProductUpdate() {
                   specificationSelectList={specificationSelectList}
                   setSpecificationSelectList={setSpecificationSelectList}
                 />
-              </Grid.Col>
+              </Grid.Col> */}
               <Grid.Col>
                 <Title order={4}>Thuộc tính sản phẩm</Title>
                 <Text size="sm">Thêm mới thuộc tính giúp sản phẩm có nhiều lựa chọn, như kích cỡ hay màu sắc</Text>
@@ -207,7 +207,7 @@ function ProductUpdate() {
                   {...form.getInputProps('supplierId')}
                 />
               </Grid.Col>
-              <Grid.Col xs={6}>
+              {/* <Grid.Col xs={6}>
                 <Select
                   label={ProductConfigs.properties.unitId.label}
                   placeholder="--"
@@ -227,7 +227,7 @@ function ProductUpdate() {
                   getCreateLabel={(tagName) => `+ Tạo tag ${tagName}`}
                   {...form.getInputProps('tags')}
                 />
-              </Grid.Col>
+              </Grid.Col> */}
               <Grid.Col xs={6}>
                 <NumberInput
                   precision={2}

@@ -10,6 +10,8 @@ import ProvinceConfigs from 'pages/province/ProvinceConfigs';
 import { DistrictResponse } from 'models/District';
 import DistrictConfigs from 'pages/district/DistrictConfigs';
 import { AddressRequest } from 'models/Address';
+import { WardResponse } from 'models/Ward';
+import WardConfigs from 'pages/ward/WardConfigs';
 
 function useWarehouseCreateViewModel() {
   const form = useForm({
@@ -19,6 +21,7 @@ function useWarehouseCreateViewModel() {
 
   const [provinceSelectList, setProvinceSelectList] = useState<SelectOption[]>([]);
   const [districtSelectList, setDistrictSelectList] = useState<SelectOption[]>([]);
+  const [wardSelectList, setWardSelectList] = useState<SelectOption[]>([]);
 
   const createApi = useCreateApi<WarehouseRequest, WarehouseResponse>(WarehouseConfigs.resourceUrl);
   useGetAllApi<ProvinceResponse>(ProvinceConfigs.resourceUrl, ProvinceConfigs.resourceKey,
@@ -42,12 +45,24 @@ function useWarehouseCreateViewModel() {
     }
   );
 
+    useGetAllApi<WardResponse>(WardConfigs.resourceUrl, WardConfigs.resourceKey,
+    { all: 1, filter: `district.id==${form.values['address.districtId'] || 0}` },
+    (wardListResponse) => {
+      const selectList: SelectOption[] = wardListResponse.content.map((item) => ({
+        value: String(item.id),
+        label: item.name,
+      }));
+      setWardSelectList(selectList);
+    },
+    { refetchOnWindowFocus: false }
+  );
+
   const handleFormSubmit = form.onSubmit((formValues) => {
     const addressRequest: AddressRequest = {
       line: formValues['address.line'] || null,
       provinceId: Number(formValues['address.provinceId']) || null,
       districtId: Number(formValues['address.districtId']) || null,
-      wardId: null,
+      wardId: Number(formValues['address.wardId']) || null,
     };
     const requestBody: WarehouseRequest = {
       code: formValues.code,
@@ -74,6 +89,7 @@ function useWarehouseCreateViewModel() {
     handleFormSubmit,
     provinceSelectList,
     districtSelectList,
+    wardSelectList,
     statusSelectList,
   };
 }

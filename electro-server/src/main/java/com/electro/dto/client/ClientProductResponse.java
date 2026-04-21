@@ -12,6 +12,7 @@ import java.util.List;
 @Accessors(chain = true)
 public class ClientProductResponse {
     private Long productId;
+    private Integer productStatus;
     private String productName;
     private String productSlug;
     @Nullable
